@@ -1,0 +1,83 @@
+
+###################################################################
+# Cosmological and foregrounds parameters used for the simulation
+###################################################################
+
+simulation:
+  cosmo. parameters:
+# Planck 2018
+# H0            : 67.36 # km/s
+    cosmomc_theta : 0.0104085
+    logA          : 3.044
+    ombh2         : 0.02237
+    omch2         : 0.1200
+    ns            : 0.9649
+    tau           : &tau 0.0544
+    mnu           : &mnu 0.06
+    omk           : &omk 0
+    r             : &r 0
+    Alens         : &Alens 1.
+
+
+
+##############################
+# Experimental configuration
+##############################
+
+data:
+  experiments : ['LAT']
+  freq_LAT: [93,145,225] # GHz
+  data_folder : './like_products'
+  select : 'tt-te-ee'
+  lmin : 50
+  lmax : 6000
+
+##############################
+# Cobaya setup
+##############################
+
+cobaya:
+  debug: False
+  force: True
+  force_reproducible: False
+
+  params:
+    # Fixed
+    tau   : *tau
+    mnu   : *mnu
+    omk   : *omk
+    r     : *r
+    # Sampled
+    cosmomc_theta:
+      prior:
+        min: 0.0103
+        max: 0.0105
+    logA:
+      prior:
+        min: 3.0
+        max: 3.1
+      drop: True
+    As:
+      value: "lambda logA: 1e-10*np.exp(logA)"
+    ns:
+      prior:
+        min: 0.9
+        max: 1.1
+    ombh2:
+      prior:
+        min: 0.017
+        max: 0.027
+    omch2:
+      prior:
+        min: 0.09
+        max: 0.15
+    Alens:
+      prior:
+        min: 0.5
+        max: 1.5
+    # Derived
+    H0:
+  theory:
+    camb:
+      stop_at_error: False
+
