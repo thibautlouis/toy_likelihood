@@ -43,7 +43,6 @@ data:
 cobaya:
   debug: False
   force: True
-  force_reproducible: False
 
   params:
     # Fixed
