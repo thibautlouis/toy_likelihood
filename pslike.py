@@ -53,7 +53,8 @@ def prepare_data(setup, sim_id=None):
                 n_bins = int(cov_mat.shape[0])
                 cov_mat = cov_mat[count*n_bins//3:(count+1)*n_bins//3,
                                   count*n_bins//3:(count+1)*n_bins//3]
-            simu.update({"l": l, "data_vec": data_vec[spec], "inv_cov": np.linalg.inv(cov_mat), "Bbl": Bbl[spec]})
+                simu.update({"l": l, "data_vec": data_vec[spec],
+                             "inv_cov": np.linalg.inv(cov_mat), "Bbl": Bbl[spec]})
 
 
 def sampling(setup):
@@ -81,7 +82,6 @@ def sampling(setup):
 
         delta = data_vec-th_vec
         chi2 = np.dot(delta, inv_cov.dot(delta))
-        print("chi2 = ", chi2)
         return -0.5*chi2
 
     info = setup["cobaya"]
@@ -93,22 +93,26 @@ def sampling(setup):
 
 def main():
     parser = argparse.ArgumentParser(description="SO python likelihood")
-    parser.add_argument("-y", "--yaml-file", help="Yaml file holding sim/minization setup",default=None, required=True)
-    parser.add_argument("--do-mcmc", help="Use MCMC sampler", default=False, required=False, action="store_true")
-    parser.add_argument("--output-base-dir", help="Set the output base dir where to store results",default=".", required=False)
-    parser.add_argument("-id","--sim-id", help="Simulation number",default=None, required=False)
-
+    parser.add_argument("-y", "--yaml-file", help="Yaml file holding sim/minization setup",
+                        default=None, required=True)
+    parser.add_argument("--do-mcmc", help="Use MCMC sampler",
+                        default=False, required=False, action="store_true")
+    parser.add_argument("--output-base-dir", help="Set the output base dir where to store results",
+                        default=".", required=False)
+    parser.add_argument("-id","--sim-id", help="Simulation number",
+                        default=None, required=False)
     args = parser.parse_args()
 
     with open(args.yaml_file, "r") as stream:
         setup = yaml.load(stream, Loader=yaml.FullLoader)
 
-    likelihood_utils.write_theory_cls(setup,lmax=9000,out_dir='sim_spectra')
+    likelihood_utils.write_theory_cls(setup, lmax=9000, out_dir=args.output_base_dir + '/sim_spectra')
 
     prepare_data(setup,args.sim_id)
 
+    # Store configuration & data
     import pickle
-    pickle.dump(setup, open("setup.pkl", "wb"))
+    pickle.dump(setup, open(args.output_base_dir + "/setup.pkl", "wb"))
 
     # Do the MCMC
     if args.do_mcmc:
