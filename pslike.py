@@ -8,68 +8,60 @@ import likelihood_utils
 import yaml
 import argparse
 
-def prepare_data(setup,sim_id=None):
+def prepare_data(setup, sim_id=None):
 
     data = setup["data"]
     loc = data["data_folder"]
-    experiments=data["experiments"]
-    select=data["select"]
+    experiments = data["experiments"]
 
-    Bbl={}
-    data_vec={}
+    spectra = ["tt","te","ee"]
+    Bbl = {s:[] for s in spectra}
+    data_vec = {s:[] for s in spectra}
 
-    for spec in ["tt","te","ee"]:
-        data_vec[spec]=[]
-        Bbl[spec]=[]
+    for id_exp1, exp1 in enumerate(experiments):
+        freqs1 = data["freq_%s" % exp1]
+        for id_f1, f1 in enumerate(freqs1):
+            for id_exp2, exp2 in enumerate(experiments):
+                freqs2 = data["freq_%s" % exp2]
+                for id_f2, f2 in enumerate(freqs2):
+                    if id_exp1 == id_exp2 and id_f1 > id_f2: continue
+                    if id_exp1 > id_exp2: continue
 
-    for id_exp1,exp1 in enumerate(experiments):
-        freqs1=data["freq_%s"%exp1]
-        for id_f1,f1 in enumerate(freqs1):
-            for id_exp2,exp2 in enumerate(experiments):
-                freqs2=data["freq_%s"%exp2]
-                for id_f2,f2 in enumerate(freqs2):
-                    if  (id_exp1==id_exp2) & (id_f1>id_f2) : continue
-                    if  (id_exp1>id_exp2) : continue
+                    spec_name = "%s_%sx%s_%s" % (exp1, f1, exp2, f2)
+                    file_name = "%s/Dl_%s" % (loc, spec_name)
+                    file_name += ".dat" if not sim_id else "_%05d.dat" % int(sim_id)
 
-                    spec_name="%s_%sx%s_%s"%(exp1,f1,exp2,f2)
+                    l, ps = likelihood_utils.read_spectra(file_name)
 
-                    if sim_id is not None:
-                        file_name="%s/Dl_%s_%05d.dat"%(loc,spec_name,int(sim_id))
-                    else:
-                        file_name="%s/Dl_%s.dat"%(loc,spec_name)
+                    for s in spectra:
+                        Bbl[s] += [np.loadtxt("%s/Bbl_%s_%s.dat" % (loc, spec_name, s.upper()))]
+                        if s == "te":
+                            data_vec[s] = np.append(data_vec[s], (ps["te"]+ps["et"])/2)
+                        else:
+                            data_vec[s] = np.append(data_vec[s], ps[s])
 
-                    l,ps=likelihood_utils.read_spectra(file_name)
-
-                    data_vec["tt"]=np.append(data_vec["tt"],ps["tt"])
-                    data_vec["te"]=np.append(data_vec["te"],(ps["te"]+ps["et"])/2)
-                    data_vec["ee"]=np.append(data_vec["ee"],ps["ee"])
-
-                    Bbl["tt"]+=[np.loadtxt("%s/Bbl_%s_TT.dat"%(loc,spec_name))]
-                    Bbl["te"]+=[np.loadtxt("%s/Bbl_%s_TE.dat"%(loc,spec_name))]
-                    Bbl["ee"]+=[np.loadtxt("%s/Bbl_%s_EE.dat"%(loc,spec_name))]
-
-    cov_mat=np.loadtxt("%s/covariance.dat"%loc)
+    cov_mat = np.loadtxt("%s/covariance.dat" % loc)
 
     simu = setup["simulation"]
-
-    for count,spec in enumerate(["tt","te","ee"]):
-        if select==spec:
-            n_bins=int(cov_mat.shape[0])
-            cov_mat= cov_mat[count*n_bins//3:(count+1)*n_bins//3,count*n_bins//3:(count+1)*n_bins//3]
-            simu.update({"l": l, "data_vec": data_vec[spec], "inv_cov": np.linalg.inv(cov_mat), "Bbl":Bbl[spec]})
-
-    if select=="tt-te-ee":
-        vec=[]
-        for spec in (["tt","te","ee"]):
-            vec=np.append(vec,data_vec[spec])
-        simu.update({"l": l, "data_vec": vec, "inv_cov": np.linalg.inv(cov_mat), "Bbl":Bbl})
+    select = data["select"]
+    if select == "tt-te-ee":
+        vec = np.concatenate([data_vec[spec] for spec in spectra])
+        simu.update({"l": l, "data_vec": vec, "inv_cov": np.linalg.inv(cov_mat), "Bbl": Bbl})
+    else:
+        for count, spec in enumerate(spectra):
+            if select == spec:
+                n_bins = int(cov_mat.shape[0])
+                cov_mat = cov_mat[count*n_bins//3:(count+1)*n_bins//3,
+                                  count*n_bins//3:(count+1)*n_bins//3]
+            simu.update({"l": l, "data_vec": data_vec[spec], "inv_cov": np.linalg.inv(cov_mat), "Bbl": Bbl[spec]})
 
 
 def sampling(setup):
 
-    lmax =setup["data"]["lmax"]
-    select =setup["data"]["select"]
-    nspec= likelihood_utils.get_nspectra(setup["data"])
+    data = setup["data"]
+    lmax = data["lmax"]
+    select = data["select"]
+    nspec = likelihood_utils.get_nspectra(data)
 
     simu = setup["simulation"]
     data_vec,inv_cov,Bbl = simu["data_vec"], simu["inv_cov"], simu["Bbl"]
@@ -104,7 +96,6 @@ def sampling(setup):
     else:
         info["likelihood"] = {"chi2": chi2}
 
-
     from cobaya.run import run
     return run(info)
 
@@ -124,6 +115,9 @@ def main():
     likelihood_utils.write_theory_cls(setup,lmax=9000,out_dir='sim_spectra')
 
     prepare_data(setup,args.sim_id)
+
+    import pickle
+    pickle.dump(setup, open("setup.pkl", "wb"))
 
     # Do the MCMC
     if args.do_mcmc:
