@@ -26,7 +26,7 @@ def get_theory_cls(setup, lmax, ell_factor=True):
     if "logA" in cosmo:
         cosmo["As"] = 1e-10*np.exp(cosmo["logA"])
         del cosmo["logA"]
-    
+
     # Get cobaya setup
     from copy import deepcopy
     info = deepcopy(setup["cobaya"])
@@ -41,13 +41,7 @@ def get_theory_cls(setup, lmax, ell_factor=True):
     return Cls
 
 def write_theory_cls(setup,lmax,out_dir):
-    try:
-        os.makedirs(out_dir)
-    except:
-        pass
-    Cls=get_theory_cls(setup, lmax, ell_factor=True)
-    l=np.arange(len(Cls['tt']))
+    os.makedirs(out_dir, exist_ok=True)
+    Cls = get_theory_cls(setup, lmax, ell_factor=True)
+    l = np.arange(len(Cls['tt']))
     np.savetxt('%s/input_spectra.dat'%out_dir, np.transpose([l[2:],Cls['tt'][2:],Cls['ee'][2:],Cls['bb'][2:],Cls['te'][2:]]))
-                                                             
-
-
