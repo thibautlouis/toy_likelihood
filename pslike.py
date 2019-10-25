@@ -64,37 +64,27 @@ def sampling(setup):
     nspec = likelihood_utils.get_nspectra(data)
 
     simu = setup["simulation"]
-    data_vec,inv_cov,Bbl = simu["data_vec"], simu["inv_cov"], simu["Bbl"]
+    data_vec, inv_cov, Bbl = simu["data_vec"], simu["inv_cov"], simu["Bbl"]
 
     def chi2(_theory={"Cl": {"tt": lmax, "ee": lmax, "te": lmax}}):
         Dls_theo = _theory.get_Cl(ell_factor=True)
-        for s in ["tt", "te", "ee"]:
+        spectra = ["tt", "te", "ee"]
+        for s in spectra:
             Dls_theo[s] = Dls_theo[s][:lmax]
-        th_vec=[]
-        for n in range(nspec):
-            th_vec=np.append(th_vec,np.dot(Bbl[n],Dls_theo[select]))
+
+        if select == "tt-te-ee":
+            th_vec = np.concatenate([np.dot(Bbl[s][n], Dls_theo[s])
+                                     for s in spectra for n in range(nspec)])
+        else:
+            th_vec = np.concatenate([np.dot(Bbl[n], Dls_theo[select]) for n in spectra])
 
         delta=data_vec-th_vec
         chi2 = np.dot(delta, inv_cov.dot(delta))
-        return -0.5*chi2
-
-    def chi2_joint(_theory={"Cl": {"tt": lmax, "ee": lmax, "te": lmax}}):
-        Dls_theo = _theory.get_Cl(ell_factor=True)
-        th_vec=[]
-        for s in ["tt", "te", "ee"]:
-            Dls_theo[s] = Dls_theo[s][:lmax]
-            for n in range(nspec):
-                th_vec=np.append(th_vec,np.dot(Bbl[s][n],Dls_theo[s]))
-        delta=data_vec-th_vec
-        chi2 = np.dot(delta, inv_cov.dot(delta))
+        print("chi2 = ", chi2)
         return -0.5*chi2
 
     info = setup["cobaya"]
-
-    if select=="tt-te-ee":
-        info["likelihood"] = {"chi2": chi2_joint}
-    else:
-        info["likelihood"] = {"chi2": chi2}
+    info["likelihood"] = {"chi2": chi2}
 
     from cobaya.run import run
     return run(info)
