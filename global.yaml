@@ -25,12 +25,16 @@ simulation:
 ##############################
 
 data:
-  experiments : ['LAT']
-  freq_LAT: [93,145,225] # GHz
-  data_folder : './like_products'
-  select : 'tt-te-ee'
-  lmin : 50
-  lmax : 6000
+  experiments:
+    - LAT
+  freq_LAT:
+    - 93  # GHz
+    - 145 # GHz
+    - 225 # GHz
+  data_folder: like_products
+  select: tt-te-ee
+  lmin: 50
+  lmax: 6000
 
 ##############################
 # Cobaya setup
@@ -39,7 +43,6 @@ data:
 cobaya:
   debug: False
   force: True
-  force_reproducible: False
 
   params:
     # Fixed
@@ -80,4 +83,3 @@ cobaya:
   theory:
     camb:
       stop_at_error: False
-
