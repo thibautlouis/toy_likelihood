@@ -55,7 +55,7 @@ cobaya:
       prior:
         min: 0.0103
         max: 0.0105
-        latex: \theta_\mathrm{MC}
+      latex: \theta_\mathrm{MC}
     logA:
       prior:
         min: 3.0
