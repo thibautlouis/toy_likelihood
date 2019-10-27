@@ -99,6 +99,8 @@ def main():
                         default=False, required=False, action="store_true")
     parser.add_argument("--output-base-dir", help="Set the output base dir where to store results",
                         default=".", required=False)
+    parser.add_argument("--use-fisher-covmat", help="Use covariance matrix from Fisher calculation as proposal",
+                        default=False, required=False, action="store_true")
     parser.add_argument("-id","--sim-id", help="Simulation number",
                         default=None, required=False)
     args = parser.parse_args()
@@ -118,12 +120,18 @@ def main():
     if args.do_mcmc:
         # Update cobaya setup
         params = setup.get("cobaya").get("params")
-        covmat_params = [k for k, v in params.items() if isinstance(v, dict) and "prior" in v.keys()]
+        covmat_params = [k for k, v in params.items() if isinstance(v, dict)
+                         and "prior" in v.keys() and "proposal" not in v.keys()]
         print("Sampling over", covmat_params, "parameters")
-        for p in covmat_params:
-            v = params.get(p)
-            proposal = (v.get("prior").get("max") - v.get("prior").get("min"))/2
-            params[p]["proposal"] = proposal
+        if args.use_fisher_covmat:
+            covmat = likelihood_utils.fisher(setup, covmat_params)
+            for i, p in enumerate(covmat_params):
+                params[p]["proposal"] = np.sqrt(covmat[i,i])
+        else:
+            for p in covmat_params:
+                v = params.get(p)
+                proposal = (v.get("prior").get("max") - v.get("prior").get("min"))/2
+                params[p]["proposal"] = proposal
         mcmc_dict = {"mcmc": None}
 
         setup["cobaya"]["sampler"] = mcmc_dict
