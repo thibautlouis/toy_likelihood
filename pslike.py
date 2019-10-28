@@ -170,6 +170,8 @@ def main():
     parser = argparse.ArgumentParser(description="SO python likelihood")
     parser.add_argument("-y", "--yaml-file", help="Yaml file holding sim/minization setup",
                         default=None, required=True)
+    parser.add_argument("--debug", help="cCeck chi2 with respect to input parameters",
+                            default=False, required=False, action="store_true")
     parser.add_argument("--do-mcmc", help="Use MCMC sampler",
                         default=False, required=False, action="store_true")
     parser.add_argument("--get-input-spectra", help="return input spectra corresponding to the sim parameters",
@@ -215,6 +217,9 @@ def main():
 
     if args.get_input_spectra:
         likelihood_utils.write_simu_cls(setup, lmax=9000, out_dir=args.output_base_dir + '/sim_spectra')
+    if args.debug:
+        prepare_data(setup,args.sim_id)
+        likelihood_utils.debug(setup)
 
 
 # script:

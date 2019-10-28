@@ -54,7 +54,7 @@ foregrounds:
     ell_0 : 3000
     T_CMB : 2.725
   components:
-    tt: ["kSZ","cibp","radio","tSZ","cibc"]
+    tt: []#["kSZ","cibp","radio","tSZ","cibc"]
     te: []
     ee: []
 

@@ -11,7 +11,7 @@ def read_spectra(fname):
         ps[f]=data[:,c+1]
     return(l,ps)
 
-def get_cosmo_Dls(setup, lmax, ell_factor=True):
+def get_cosmo_ps(setup, lmax, ell_factor=True):
     # Get simulation parameters
     simu = setup["simulation"]
     cosmo = simu["cosmo. parameters"]
@@ -33,7 +33,7 @@ def get_cosmo_Dls(setup, lmax, ell_factor=True):
     Dls = model.likelihood.theory.get_Cl(ell_factor=ell_factor)
     return Dls
 
-def get_fg_Dls(setup,lmax):
+def get_fg_ps(setup,lmax):
     from pslike import get_fg_model
     foregrounds=setup["foregrounds"]
     setup["data"]["lmax"]= lmax
@@ -45,15 +45,11 @@ def get_fg_Dls(setup,lmax):
 def write_simu_cls(setup,lmax,out_dir,lmin=2):
 
     os.makedirs(out_dir, exist_ok=True)
-    Cls = get_theory_cls(setup, lmax, ell_factor=True)
-    l = np.arange(len(Cls['tt']))
-    np.savetxt('%s/input_spectra.dat'%out_dir, np.transpose([l[2:],Cls['tt'][2:],Cls['ee'][2:],Cls['bb'][2:],Cls['te'][2:]]))
-
     # get cosmological Dls
-    Dls = get_cosmo_Dls(setup, lmax, ell_factor=True)
+    Dls = get_cosmo_ps(setup, lmax, ell_factor=True)
     l = np.arange(len(Dls["tt"]))
     # get foreground Dls
-    fg_model= get_fg_Dls(setup,lmax)
+    fg_model= get_fg_ps(setup,lmax)
     np.savetxt("%s/cosmo_spectra.dat"%out_dir, np.transpose([l[lmin:lmax],Dls["tt"][lmin:lmax],Dls["ee"][lmin:lmax],Dls["bb"][lmin:lmax],Dls["te"][lmin:lmax]]))
 
     data = setup["data"]
@@ -79,93 +75,46 @@ def write_simu_cls(setup,lmax,out_dir,lmin=2):
                 for comp in component_list[s]:
                     np.savetxt("%s/%s_%s_%sx%s.dat"%(out_dir,s,comp,f1,f2), np.transpose([l[lmin:lmax],fg_model[s,"all",f1,f2][lmin:lmax] ]))
 
-def fisher(setup, covmat_params):
+
+def debug(setup):
+    
     data = setup["data"]
-    lmin, lmax = data["lmin"], data["lmax"]
+    lmax = data["lmax"]
     select = data["select"]
-    ls = np.arange(lmin, lmax)
-    nell = np.alen(ls)
+    spec_list= data["spec_list"]
+    
+    fg_param= setup["simulation"]["fg_parameters"]
+    fg_model= get_fg_ps(setup,lmax)
 
-    from copy import deepcopy
+    simu = setup["simulation"]
+    data_vec, inv_cov, Bbl = data["data_vec"], data["inv_cov"], data["Bbl"]
+        
+    Dls_theo = get_cosmo_ps(setup, lmax, ell_factor=True)
+    spectra = ["tt", "te", "ee"]
+    for s in spectra:
+        Dls_theo[s] = Dls_theo[s][:lmax]
 
-    params = covmat_params
-    epsilon = 0.01
+    th_vec=[]
     if select == "tt-te-ee":
-        deriv = np.empty((len(params), 2, 2, nell))
+        for s in spectra:
+            for spec in spec_list:
+                m1,m2=spec.split('x')
+                f1,f2=int(m1.split('_')[1]),int(m2.split('_')[1])
+                th_vec=np.append(th_vec,np.dot(Bbl[s,spec], Dls_theo[s]+fg_model[s,"all",f1,f2]))
     else:
-        deriv = np.empty((len(params), nell))
+        for spec in spec_list:
+            m1,m2=spec.split('x')
+            f1,f2=int(m1.split('_')[1]),int(m2.split('_')[1])
+            th_vec = np.append(th_vec,np.dot(Bbl[select,spec], Dls_theo[select]+fg_model[select,"all",f1,f2]))
 
-    for i, p in enumerate(params):
-        setup_mod = deepcopy(setup)
-        parname = p if p != "logA" else "As"
-        value = setup["simulation"]["cosmo. parameters"][parname]
-        setup_mod["simulation"]["cosmo. parameters"][parname] = (1-epsilon)*value
-        Cl_minus = get_theory_cls(setup_mod, lmax)
-        setup_mod["simulation"]["cosmo. parameters"][parname] = (1+epsilon)*value
-        Cl_plus = get_theory_cls(setup_mod, lmax)
+    delta = data_vec-th_vec
+    chi2 = np.dot(delta, inv_cov.dot(delta))
+    print ("chi2/dof: %.02f/%d "%(chi2,len(data_vec)))
 
-        d = {}
-        for s in ["tt", "te", "ee", "r"]:
-            if s == "r":
-                plus = Cl_plus["te"]/np.sqrt(Cl_plus["tt"]*Cl_plus["ee"])
-                minus = Cl_minus["te"]/np.sqrt(Cl_minus["tt"]*Cl_minus["ee"])
-            else:
-                plus, minus = Cl_plus[s], Cl_minus[s]
-            delta = (plus[lmin:lmax] - minus[lmin:lmax])/(2*epsilon*value)
-            d[s] = delta if p != "logA" else delta*value
 
-        if select == "tt-te-ee":
-            deriv[i] = np.array([[d["tt"], d["te"]],
-                                 [d["te"], d["ee"]]])
-        else:
-            deriv[i] = d[study.lower()]
 
-    # Compute covariance matrix
-    Cls = get_theory_cls(setup, lmax)
-    Cl_TT = Cls["tt"][lmin:lmax]
-    Cl_TE = Cls["te"][lmin:lmax]
-    Cl_EE = Cls["ee"][lmin:lmax]
-    N_TT, N_EE = 0, 0
-    if select == "tt-te-ee":
-        C = np.array([[Cl_TT + N_TT, Cl_TE],
-                      [Cl_TE, Cl_EE + N_EE]])
-    elif select.lower() == "tt":
-        C = 2*(Cl_TT + N_TT)**2
-    elif select.lower() == "te":
-        C = (Cl_TT + N_TT)*(Cl_EE + N_EE) + Cl_TE**2
-    elif select.lower() == "ee":
-        C = 2*(Cl_EE + N_EE)**2
-    elif select.lower() == "r":
-        R = Cl_TE/np.sqrt(Cl_TT*Cl_EE)
-        C = R**4 - 2*R**2 + 1 + N_TT/Cl_TT + N_EE/Cl_EE + (N_TT*N_EE)/(Cl_TT*Cl_EE) \
-            + R**2*(0.5*(N_TT/Cl_TT - 1)**2 + 0.5*(N_EE/Cl_EE - 1)**2 - 1)
 
-    inv_C = C**-1
-    if select == "tt-te-ee":
-        for l in range(nell):
-            inv_C[:,:,l] = np.linalg.inv(C[:,:,l])
 
-    # Fisher matrix
-    nparam = len(params)
-    fisher = np.empty((nparam,nparam))
-    for p1 in range(nparam):
-        for p2 in range(nparam):
-            somme = 0.0
-            if select == "tt-te-ee":
-                for l in range(nell):
-                    m1 = np.dot(inv_C[:,:,l], deriv[p1,:,:,l])
-                    m2 = np.dot(inv_C[:,:,l], deriv[p2,:,:,l])
-                    somme += (2*ls[l]+1)/2*np.trace(np.dot(m1, m2))
-            else:
-                somme = np.sum((2*ls+1)*inv_C*deriv[p1]*deriv[p2])
-            fisher[p1, p2] = somme
-
-    cov = np.linalg.inv(fisher)
-    print("eigenvalues = ", np.linalg.eigvals(cov))
-    for count, p in enumerate(params):
-        if p == "logA":
-            value = np.log(1e10*setup_mod["simulation"]["cosmo. parameters"]["As"])
-        else:
-            value = setup_mod["simulation"]["cosmo. parameters"][p]
-        print(p, value, np.sqrt(cov[count,count]))
-    return cov
+def fisher(setup, covmat_params):
+    print ("not implemented yet")
+    return
