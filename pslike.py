@@ -66,7 +66,7 @@ def prepare_data(setup, sim_id=None):
 def get_fg_model(setup,fg_param):
     
     data = setup["data"]
-    l = np.arange( data["lmax"])
+    l = np.arange(2,data["lmax"]+2)
     experiments = data["experiments"]
 
     foregrounds=setup["foregrounds"]
@@ -132,7 +132,7 @@ def sampling(setup):
         Dls_theo = _theory.get_Cl(ell_factor=True)
         spectra = ["tt", "te", "ee"]
         for s in spectra:
-            Dls_theo[s] = Dls_theo[s][:lmax]
+            Dls_theo[s] = Dls_theo[s][2:lmax+2]
         
         th_vec=[]
 

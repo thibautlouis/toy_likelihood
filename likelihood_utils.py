@@ -92,7 +92,7 @@ def debug(setup):
     Dls_theo = get_cosmo_ps(setup, lmax, ell_factor=True)
     spectra = ["tt", "te", "ee"]
     for s in spectra:
-        Dls_theo[s] = Dls_theo[s][:lmax]
+        Dls_theo[s] = Dls_theo[s][2:lmax+2]
 
     th_vec=[]
     if select == "tt-te-ee":
@@ -106,6 +106,7 @@ def debug(setup):
             m1,m2=spec.split('x')
             f1,f2=int(m1.split('_')[1]),int(m2.split('_')[1])
             th_vec = np.append(th_vec,np.dot(Bbl[select,spec], Dls_theo[select]+fg_model[select,"all",f1,f2]))
+
 
     delta = data_vec-th_vec
     chi2 = np.dot(delta, inv_cov.dot(delta))
