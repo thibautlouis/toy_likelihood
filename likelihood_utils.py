@@ -11,14 +11,7 @@ def read_spectra(fname):
         ps[f]=data[:,c+1]
     return(l,ps)
 
-def get_nspectra(data):
-    nfreq=0
-    for exp in data["experiments"]:
-        nfreq+=len(data["freq_%s"%exp])
-    nspec=int(nfreq*(nfreq+1)/2)
-    return nspec
-
-def get_theory_cls(setup, lmax, ell_factor=True):
+def get_cosmo_Dls(setup, lmax, ell_factor=True):
     # Get simulation parameters
     simu = setup["simulation"]
     cosmo = simu["cosmo. parameters"]
@@ -37,11 +30,49 @@ def get_theory_cls(setup, lmax, ell_factor=True):
     model = get_model(info)
     model.likelihood.theory.needs(Cl={"tt": lmax, "ee": lmax, "te": lmax, "bb":lmax})
     model.logposterior({}) # parameters are fixed
-    Cls = model.likelihood.theory.get_Cl(ell_factor=ell_factor)
-    return Cls
+    Dls = model.likelihood.theory.get_Cl(ell_factor=ell_factor)
+    return Dls
 
-def write_theory_cls(setup,lmax,out_dir):
+def get_fg_Dls(setup,lmax):
+    from pslike import get_fg_model
+    foregrounds=setup["foregrounds"]
+    setup["data"]["lmax"]= lmax
+    fg_param=setup["simulation"]["fg_parameters"]
+    fg_model=get_fg_model(setup,fg_param)
+    return fg_model
+
+
+def write_simu_cls(setup,lmax,out_dir,lmin=2):
+    
     os.makedirs(out_dir, exist_ok=True)
-    Cls = get_theory_cls(setup, lmax, ell_factor=True)
-    l = np.arange(len(Cls['tt']))
-    np.savetxt('%s/input_spectra.dat'%out_dir, np.transpose([l[2:],Cls['tt'][2:],Cls['ee'][2:],Cls['bb'][2:],Cls['te'][2:]]))
+    # get cosmological Dls
+    Dls = get_cosmo_Dls(setup, lmax, ell_factor=True)
+    l = np.arange(len(Dls["tt"]))
+    # get foreground Dls
+    fg_model= get_fg_Dls(setup,lmax)
+    np.savetxt("%s/cosmo_spectra.dat"%out_dir, np.transpose([l[lmin:lmax],Dls["tt"][lmin:lmax],Dls["ee"][lmin:lmax],Dls["bb"][lmin:lmax],Dls["te"][lmin:lmax]]))
+
+    data = setup["data"]
+    experiments = data["experiments"]
+
+    all_freqs=[]
+    for exp in experiments:
+        all_freqs  = np.append(all_freqs, data["freq_%s"%exp])
+    all_freqs=all_freqs.astype(int)
+
+    foregrounds= setup["foregrounds"]
+    spectra = ["tt","te","ee"]
+    components= foregrounds["components"]
+
+    component_list={}
+    component_list["tt"]=components["tt"]
+    component_list["te"]=components["te"]
+    component_list["ee"]=components["ee"]
+
+    for c1,f1 in enumerate(all_freqs):
+        for c2,f2 in enumerate(all_freqs):
+            for s in spectra:
+                for comp in component_list[s]:
+                    np.savetxt("%s/%s_%s_%sx%s.dat"%(out_dir,s,comp,f1,f2), np.transpose([l[lmin:lmax],fg_model[s,"all",f1,f2][lmin:lmax] ]))
+
+

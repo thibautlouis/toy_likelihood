@@ -5,8 +5,6 @@
 
 simulation:
   cosmo. parameters:
-# Planck 2018
-# H0            : 67.36 # km/s
     cosmomc_theta : 0.0104085
     logA          : 3.044
     ombh2         : 0.02237
@@ -17,8 +15,17 @@ simulation:
     omk           : &omk 0
     r             : &r 0
     Alens         : &Alens 1.
-
-
+  fg_parameters:
+    a_tSZ : 3.3
+    a_kSZ : 1.60
+    a_p : 6.9
+    beta_p : 2.08
+    a_c :  4.9
+    beta_c : 2.2
+    n_CIBC : 1.20
+    a_s : 3.1
+    a_g : 0.88
+    T_d : 9.6
 
 ##############################
 # Experimental configuration
@@ -32,9 +39,24 @@ data:
     - 145 # GHz
     - 225 # GHz
   data_folder: like_products
-  select: tt-te-ee
+  select: tt
   lmin: 50
   lmax: 6000
+
+
+##############################
+# Foregrounds model
+##############################
+
+foregrounds:
+  normalisation:
+    nu_0 : 150.0
+    ell_0 : 3000
+    T_CMB : 2.725
+  components:
+    tt: ["kSZ","cibp","radio","tSZ","cibc"]
+    te: []
+    ee: []
 
 ##############################
 # Cobaya setup
