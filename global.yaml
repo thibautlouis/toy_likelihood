@@ -39,7 +39,7 @@ data:
     - 145 # GHz
     - 225 # GHz
   data_folder: like_products
-  select: tt
+  select: tt-te-ee
   lmin: 50
   lmax: 6000
 

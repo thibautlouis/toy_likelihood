@@ -109,8 +109,7 @@ def debug(setup):
 
     delta = data_vec-th_vec
     chi2 = np.dot(delta, inv_cov.dot(delta))
-    print ("chi2/dof: %.02f/%d "%(chi2,len(data_vec)))
-
+    print ("%s chi2/dof: %.02f/%d "%(select, chi2,len(data_vec)))
 
 
 
