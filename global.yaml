@@ -16,16 +16,16 @@ simulation:
     r             : &r 0
     Alens         : &Alens 1.
   fg_parameters:
-    a_tSZ : 3.3
-    a_kSZ : 1.60
-    a_p : 6.9
+    a_tSZ  : 3.30
+    a_kSZ  : 1.60
+    a_p    : 6.90
     beta_p : 2.08
-    a_c :  4.9
-    beta_c : 2.2
+    a_c    : 4.90
+    beta_c : 2.20
     n_CIBC : 1.20
-    a_s : 3.1
-    a_g : 0.88
-    T_d : 9.6
+    a_s    : 3.10
+    a_g    : 0.88
+    T_d    : 9.60
 
 ##############################
 # Experimental configuration
@@ -40,8 +40,9 @@ data:
     - 225 # GHz
   data_folder: like_products
   select: tt-te-ee
-  lmin: 50
-  lmax: 6000
+  # Bbl range
+  lmin: 2
+  lmax: 6002
 
 
 ##############################
@@ -50,11 +51,16 @@ data:
 
 foregrounds:
   normalisation:
-    nu_0 : 150.0
-    ell_0 : 3000
-    T_CMB : 2.725
+    nu_0: 150.0
+    ell_0: 3000
+    T_CMB: 2.725
   components:
-    tt: []#["kSZ","cibp","radio","tSZ","cibc"]
+    tt:
+      - kSZ
+      - cibp
+      - radio
+      - tSZ
+      - cibc
     te: []
     ee: []
 
@@ -110,6 +116,12 @@ cobaya:
     # Derived
     H0:
       latex: H_0
+    # Foregrounds
+    a_tSZ:
+      prior:
+        min: 0
+        max: 6
+      proposal: 1
   theory:
     camb:
       stop_at_error: False
