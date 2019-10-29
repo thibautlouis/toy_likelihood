@@ -79,20 +79,19 @@ def write_simu_cls(setup,lmax,out_dir,lmin=2):
 def debug(setup):
 
     data = setup["data"]
-    lmax = data["lmax"]
+    lmin, lmax = data["lmin"], data["lmax"]
     select = data["select"]
-    spec_list= data["spec_list"]
+    spec_list = data["spec_list"]
 
-    fg_param= setup["simulation"]["fg_parameters"]
-    fg_model= get_fg_ps(setup,lmax)
-
-    simu = setup["simulation"]
     data_vec, inv_cov, Bbl = data["data_vec"], data["inv_cov"], data["Bbl"]
+
+    fg_param = setup["simulation"]["fg_parameters"]
+    fg_model = get_fg_ps(setup,lmax)
 
     Dls_theo = get_cosmo_ps(setup, lmax, ell_factor=True)
     spectra = ["tt", "te", "ee"]
     for s in spectra:
-        Dls_theo[s] = Dls_theo[s][2:lmax+2]
+        Dls_theo[s] = Dls_theo[s][lmin:lmax]
 
     th_vec=[]
     if select == "tt-te-ee":

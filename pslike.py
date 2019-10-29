@@ -199,13 +199,13 @@ def main():
     if args.get_input_spectra:
         likelihood_utils.write_simu_cls(setup, lmax=9000, out_dir=args.output_base_dir + '/sim_spectra')
         return
-    if args.debug:
-        prepare_data(setup,args.sim_id)
-        likelihood_utils.debug(setup)
-        return
 
     # Prepare data
     prepare_data(setup, args.sim_id)
+
+    if args.debug:
+        likelihood_utils.debug(setup)
+        return
 
     # Store configuration & data
     import pickle
