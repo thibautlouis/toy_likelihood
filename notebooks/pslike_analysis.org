@@ -5,69 +5,15 @@
   %matplotlib inline
   import matplotlib.pyplot as plt
   import numpy as np
-  from getdist import plots, MCSamples
+  from getdist import plots, loadMCSamples
 #+END_SRC
 
-* MCMC chains
+* Definitions
+Define default data directory and what CMB parameter names are.
 
 #+BEGIN_SRC ipython :session :results none
-  output_path = "/home/garrido/Workdir/CMB/development/toy_likelihood/output"
-#+END_SRC
-
-
-#+BEGIN_SRC ipython :session :results none
-  import pandas as pd
-  import glob
-  def get_chains(path, drop=None, keep=None):
-      all_files = glob.glob(path)
-      # Sort alphabetically
-      all_files.sort()
-      chains = {}
-      for f in all_files:
-          df = pd.read_csv(f, delim_whitespace=True)
-          weights = df.iloc[:,0]
-          if keep is not None:
-              df = df.filter(items=keep)
-          elif drop is not None:
-              df.drop(columns=drop, inplace=True)
-          key = f.split("/")[-1]
-          # Take into account weights
-          # weights = np.full_like(weights, 1)
-          chains[key] = np.repeat(np.array(df),
-                                  np.array(weights, dtype=int),
-                                  axis=0)
-      return chains
-
-  def plot_chains(path, burnin=0, labels=None, nrow=None, ncol=None, drop=None, keep=None, legend=False):
-      chains = get_chains(path=path, drop=drop, keep=keep)
-      if not labels:
-          labels = keep
-          if isinstance(keep, list):
-              import os
-              fn = os.path.dirname(glob.glob(path)[0]) + "/mcmc.updated.yaml"
-              if os.path.exists(fn):
-                import yaml
-                with open(fn, "r") as stream:
-                    setup = yaml.load(stream, Loader=yaml.FullLoader)
-                labels = ["${}$".format(setup["params"][k].get("latex", k)) for k in keep]
-
-      nrow = len(labels)//2 if nrow is None else nrow
-      ncol = len(labels)//2 if ncol is None else ncol
-      fig = plt.figure(figsize=(15, 10))
-      for i, label in enumerate(labels):
-          plt.subplot(nrow, ncol, i+1)
-          plt.ylabel(label)
-          for k, v in chains.items():
-              ist = int((1.-burnin)*len(v)) if 0 < burnin < 1 else int(burnin)
-              j = k.split(".")[1]
-              plt.plot(v[ist:, i], alpha=0.75, color="C{}".format(j))
-          if legend and i+1 == nrow:
-              plt.legend(list(chains.keys()), loc="upper left", bbox_to_anchor=(1,1))
-      plt.tight_layout()
-#+END_SRC
-
-#+BEGIN_SRC ipython :session :results raw drawer
-    columns = [
+  file_root = "./data/mcmc_pslike_tt-te-ee/mcmc"
+  cosmo_params = [
       "cosmomc_theta",
       "logA",
       "ns",
@@ -76,35 +22,73 @@
       "H0",
       "Alens"
   ]
-  plot_chains(output_path + "/mcmc*ee/mcmc.?.txt", keep=columns)
+#+END_SRC
+
+* MCMC chains
+Have a look at how chains evolve with time and check convergence or not.
+
+#+BEGIN_SRC ipython :session :results raw none
+  def plot_chains(file_root, params, nrow=None, ncol=None):
+    from getdist.chains import chainFiles
+    files = chainFiles(file_root, separator=".")
+
+    nrow = len(params)//2 if nrow is None else nrow
+    ncol = len(params)//2 if ncol is None else ncol
+    plt.figure(figsize=(15, 10))
+
+    # Loop over files independantly
+    for f in files:
+      sample = loadMCSamples(f[:-4])
+      color = "C{}".format(f.split(".")[-2])
+
+      # Get param values
+      values = sample.getParams()
+
+      # Get associated LaTeX labels
+      labels = sample.paramNames.parsWithNames(cosmo_params)
+      for i, p in enumerate(params):
+        ax = plt.subplot(nrow, ncol, i+1)
+        ax.set_ylabel(labels[i].latexLabel())
+        ax.plot(getattr(values, p), alpha=0.75, color=color)
+
+    plt.tight_layout()
+#+END_SRC
+
+Plot chains for the CMB parameters
+#+BEGIN_SRC ipython :session :results raw drawer
+  plot_chains(file_root, params=cosmo_params)
 #+END_SRC
 
 #+RESULTS:
 :results:
-# Out[148]:
-[[file:./obipy-resources/H6Ifgl.png]]
+# Out[243]:
+[[file:./obipy-resources/d7nutU.png]]
 :end:
 * MCMC distributions
+Load the different chains into one weighted sample with burnin corresponding to 40% of the chains.
 #+BEGIN_SRC ipython :session :results none
-  def show_ref(g, params):
-      import yaml
-      with open("../global.yaml", "r") as stream:
-          setup = yaml.load(stream, Loader=yaml.FullLoader)
-      cosmo_params = setup["simulation"]["cosmo. parameters"]
-      cosmo_params.update({"H0": 67.36})
-      for i, p in enumerate(params):
-          ref_value = cosmo_params[p]
-          kwargs = dict(color="gray", ls="--", lw=1)
-          for ax in g.subplots[:,i]:
-              if ax: ax.axvline(ref_value, **kwargs)
-          for ax in g.subplots[i,:i]:
-              if ax: ax.axhline(ref_value, **kwargs)
+  sample = loadMCSamples(file_root, settings={"ignore_rows": 0.4})
 #+END_SRC
 
-#+BEGIN_SRC ipython :session :results raw drawer
-  from getdist import loadMCSamples
-  chain_dir = "/home/garrido/Workdir/CMB/development/toy_likelihood/output"
-  samples = loadMCSamples(chain_dir + "/mcmc_pslike_tt-te-ee/mcmc", no_cache=True, settings={"ignore_rows": 0.4})
+Show input values from simulation.
+#+BEGIN_SRC ipython :session :results none
+  def show_input(g, params):
+      inputs = {
+          "cosmomc_theta": 0.0104085,
+          "logA": 3.044,
+          "ombh2": 0.02237,
+          "omch2": 0.1200,
+          "ns": 0.9649,
+          "Alens": 1.0,
+          "H0": 67.36
+      }
+      for i, p in enumerate(params):
+          x = inputs.get(p, np.nan)
+          kwargs = dict(color="gray", ls="--", lw=1)
+          for ax in g.subplots[:,i]:
+              if ax: ax.axvline(x, **kwargs)
+          for ax in g.subplots[i,:i]:
+              if ax: ax.axhline(x, **kwargs)
 #+END_SRC
 
 ** Triangle plot
@@ -112,31 +96,38 @@
   g = plots.getSubplotPlotter()
   g.settings.num_plot_contours = 3
   g.settings.lineM = ["-CO"]
-  # roots = ["mcmc_pslike_tt-te-ee/mcmc"]
-  params = [
-      "cosmomc_theta",
-      "logA",
-      "ns",
-      "ombh2",
-      "omch2",
-      "H0",
-      "Alens"
-  ]
-  g.triangle_plot(samples, params, filled=True, colors=["C0"])
-  show_ref(g, params)
+  g.triangle_plot(sample, cosmo_params, filled=True, colors=["C0"])
+  show_input(g, cosmo_params)
 #+END_SRC
 
 #+RESULTS:
 :results:
-# Out[152]:
-[[file:./obipy-resources/gHSoYq.png]]
+# Out[279]:
+[[file:./obipy-resources/tISbhO.png]]
 :end:
+
 ** Table
-#+BEGIN_SRC ipython :session :results verbatim drawer output
-  print("[[file:{}]]".format(samples.getTable(paramList=params, limit=1).tablePNG()))
+#+BEGIN_SRC ipython :session :results none
+from IPython.display import HTML, display
+import tabulate
+table = sample.getTable().tableParamNames
+results = [[par.latexLabel(), par.mean, par.err] for j, par in enumerate(table.names)
+                                              if table.name(j) in cosmo_params]
+display(HTML(tabulate.tabulate(results, headers=["Parameter", "mean", "std."], tablefmt="html")))
+#+END_SRC
+
+*** Org table                                                    :noexport:
+#+BEGIN_SRC ipython :session :results raw output
+  print(tabulate.tabulate(results, headers=["Parameter", "mean", "std."], tablefmt="orgtbl"))
 #+END_SRC
 
 #+RESULTS:
-:results:
-[[file:/tmp/tmpglo0reer.png]]
-:end:
+| Parameter                    |      mean |        std. |
+|------------------------------+-----------+-------------|
+| $\theta_\mathrm{MC}$         | 0.0104072 | 1.40964e-06 |
+| $\log(10^{10} A_\mathrm{s})$ |   3.04293 |  0.00355408 |
+| $n_\mathrm{s}$               |   0.96668 |   0.0031741 |
+| $\Omega_\mathrm{b}h^2$       |  0.022315 | 6.16766e-05 |
+| $\Omega_\mathrm{c}h^2$       |  0.120931 |  0.00110346 |
+| $A_\mathrm{L}$               |    1.0096 |   0.0211548 |
+| $H_0$                        |   66.9218 |    0.426916 |
