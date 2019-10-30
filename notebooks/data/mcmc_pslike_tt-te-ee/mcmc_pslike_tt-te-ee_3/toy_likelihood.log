@@ -1,0 +1,396 @@
+
+###################################################################
+# Cosmological and foregrounds parameters used for the simulation
+###################################################################
+
+simulation:
+  cosmo. parameters:
+    cosmomc_theta : 0.0104085
+    logA          : 3.044
+    ombh2         : 0.02237
+    omch2         : 0.1200
+    ns            : 0.9649
+    tau           : &tau 0.0544
+    mnu           : &mnu 0.06
+    omk           : &omk 0
+    r             : &r 0
+    Alens         : &Alens 1.
+  fg_parameters:
+    a_tSZ : 3.3
+    a_kSZ : 1.60
+    a_p : 6.9
+    beta_p : 2.08
+    a_c :  4.9
+    beta_c : 2.2
+    n_CIBC : 1.20
+    a_s : 3.1
+    a_g : 0.88
+    T_d : 9.6
+
+##############################
+# Experimental configuration
+##############################
+
+data:
+  experiments:
+    - LAT
+  freq_LAT:
+    - 93  # GHz
+    - 145 # GHz
+    - 225 # GHz
+  data_folder:  /sps/planck/Temp/garrido.d/development/toy_likelihood/software/like_products
+  select: tt-te-ee
+  lmin: 50
+  lmax: 6000
+
+
+##############################
+# Foregrounds model
+##############################
+
+foregrounds:
+  normalisation:
+    nu_0 : 150.0
+    ell_0 : 3000
+    T_CMB : 2.725
+  components:
+    tt: []#["kSZ","cibp","radio","tSZ","cibc"]
+    te: []
+    ee: []
+
+##############################
+# Cobaya setup
+##############################
+
+cobaya:
+  debug: False
+  force: True
+
+  params:
+    # Fixed
+    tau   : *tau
+    mnu   : *mnu
+    omk   : *omk
+    r     : *r
+    # Sampled
+    cosmomc_theta:
+      prior:
+        min: 0.0103
+        max: 0.0105
+      latex: \theta_\mathrm{MC}
+    logA:
+      prior:
+        min: 3.0
+        max: 3.1
+      drop: True
+      latex: \log(10^{10} A_\mathrm{s})
+    As:
+      value: "lambda logA: 1e-10*np.exp(logA)"
+      latex: A_\mathrm{s}
+    ns:
+      prior:
+        min: 0.9
+        max: 1.1
+      latex: n_\mathrm{s}
+    ombh2:
+      prior:
+        min: 0.017
+        max: 0.027
+      latex: \Omega_\mathrm{b}h^2
+    omch2:
+      prior:
+        min: 0.09
+        max: 0.15
+      latex: \Omega_\mathrm{c}h^2
+    Alens:
+      prior:
+        min: 0.5
+        max: 1.5
+      latex: A_\mathrm{L}
+    # Derived
+    H0:
+      latex: H_0
+  theory:
+    camb:
+      stop_at_error: False
+Sampling over ['cosmomc_theta', 'logA', 'ns', 'ombh2', 'omch2', 'Alens'] parameters
+[model] *WARNING* Ignored blocks/options: ['force']
+[prior] *WARNING* No sampled parameters requested! This will fail for non-mock samplers.
+[camb] Importing *global* CAMB.
+[model] *WARNING* Ignored blocks/options: ['force']
+[prior] *WARNING* No sampled parameters requested! This will fail for non-mock samplers.
+[camb] Importing *global* CAMB.
+[model] *WARNING* Ignored blocks/options: ['force']
+[prior] *WARNING* No sampled parameters requested! This will fail for non-mock samplers.
+[camb] Importing *global* CAMB.
+[model] *WARNING* Ignored blocks/options: ['force']
+[prior] *WARNING* No sampled parameters requested! This will fail for non-mock samplers.
+[camb] Importing *global* CAMB.
+[model] *WARNING* Ignored blocks/options: ['force']
+[prior] *WARNING* No sampled parameters requested! This will fail for non-mock samplers.
+[camb] Importing *global* CAMB.
+[model] *WARNING* Ignored blocks/options: ['force']
+[prior] *WARNING* No sampled parameters requested! This will fail for non-mock samplers.
+[camb] Importing *global* CAMB.
+[model] *WARNING* Ignored blocks/options: ['force']
+[prior] *WARNING* No sampled parameters requested! This will fail for non-mock samplers.
+[camb] Importing *global* CAMB.
+[model] *WARNING* Ignored blocks/options: ['force']
+[prior] *WARNING* No sampled parameters requested! This will fail for non-mock samplers.
+[camb] Importing *global* CAMB.
+[model] *WARNING* Ignored blocks/options: ['force']
+[prior] *WARNING* No sampled parameters requested! This will fail for non-mock samplers.
+[camb] Importing *global* CAMB.
+[model] *WARNING* Ignored blocks/options: ['force']
+[prior] *WARNING* No sampled parameters requested! This will fail for non-mock samplers.
+[camb] Importing *global* CAMB.
+[model] *WARNING* Ignored blocks/options: ['force']
+[prior] *WARNING* No sampled parameters requested! This will fail for non-mock samplers.
+[camb] Importing *global* CAMB.
+[model] *WARNING* Ignored blocks/options: ['force']
+[prior] *WARNING* No sampled parameters requested! This will fail for non-mock samplers.
+[camb] Importing *global* CAMB.
+[model] *WARNING* Ignored blocks/options: ['force']
+[prior] *WARNING* No sampled parameters requested! This will fail for non-mock samplers.
+[camb] Importing *global* CAMB.
+eigenvalues =  [3.54661035e-05 1.33335039e-06 8.05304789e-08 3.97531020e-10
+ 3.73557239e-14 3.48899625e-11]
+cosmomc_theta 0.0104085 5.322871385285019e-07
+logA 3.044 0.0011394363059076666
+ns 0.9649 0.0010758437568370433
+ombh2 0.02237 9.647018023431215e-06
+omch2 0.12 0.00023721074449701762
+Alens 1.01 0.005862448260898677
+[output] Output to be read-from/written-into folder '/sps/planck/Temp/garrido.d/development/toy_likelihood/output/mcmc_pslike_tt-te-ee_3', with prefix 'mcmc'
+[chi2] Initialised external likelihood.
+[camb] Importing *global* CAMB.
+[likelihood] The theory code will compute the following products, requested by the likelihoods: ['H0', 'Cl']
+[mcmc] Covariance matrix not present. We will start learning the covariance of the proposal earlier: R-1 = 30 (was 2).
+[mcmc] Initial point:
+[prior] Reference values or pdf's for some parameters were not provided. Sampling from the prior instead for those parameters.
+[mcmc] 
+ weight  minuslogpost  cosmomc_theta      logA        ns     ombh2     omch2     Alens            As        H0  \
+    1.0  61040.686814       0.010474  3.091304  1.079902  0.023718  0.149643  1.038241  2.200575e-09  61.62688   
+
+ minuslogprior  minuslogprior__0           chi2     chi2__chi2  
+    -19.847797        -19.847797  122121.069221  122121.069221  
+[mcmc] Sampling! (NB: nothing will be printed until 120 burn-in samples have been obtained)
+[mcmc] Finished burn-in phase: discarded 120 accepted steps.
+[mcmc] Checkpoint: 240 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 27.092146 after 240 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 480 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 30.569956 after 480 accepted steps
+[mcmc] Bad convergence statistics: waiting until the next checkpoint.
+[mcmc] Checkpoint: 720 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 18.118009 after 720 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 960 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 15.057624 after 960 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 1200 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 7.873477 after 1200 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 1440 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 5.106458 after 1440 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 1680 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 3.578377 after 1680 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 1920 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 4.167170 after 1920 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 2160 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 1.984701 after 2160 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 2400 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.988169 after 2400 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 2640 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.506562 after 2640 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 2880 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.272627 after 2880 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 3120 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.148656 after 3120 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 3360 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.088080 after 3360 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 3600 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.065315 after 3600 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 3840 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.052448 after 3840 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 4080 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.061055 after 4080 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 4320 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.037318 after 4320 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 4560 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.046727 after 4560 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 4800 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.023059 after 4800 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 5040 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.027622 after 5040 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 5280 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.018773 after 5280 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 5520 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.019548 after 5520 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 5760 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.023552 after 5760 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 6000 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.018024 after 6000 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 6240 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.020512 after 6240 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 6480 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.020000 after 6480 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 6720 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.024129 after 6720 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 6960 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.021632 after 6960 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 7200 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.018166 after 7200 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 7440 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.017147 after 7440 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 7680 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.021104 after 7680 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 7920 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.026285 after 7920 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 8160 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.030664 after 8160 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 8400 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.019734 after 8400 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 8640 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.019102 after 8640 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 8880 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.016257 after 8880 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 9120 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.012191 after 9120 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 9360 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.013931 after 9360 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 9600 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.017804 after 9600 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 9840 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.015459 after 9840 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 10080 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.013625 after 10080 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 10320 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.014909 after 10320 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 10560 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.013328 after 10560 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 10800 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.015880 after 10800 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 11040 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.015284 after 11040 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 11280 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.009665 after 11280 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 11520 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.011057 after 11520 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 11760 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.012857 after 11760 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 12000 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.011412 after 12000 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 12240 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.011115 after 12240 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 12480 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.009809 after 12480 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 12720 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.009149 after 12720 accepted steps
+[mcmc] Convergence of bounds: R-1 = 0.074037 after 12720 accepted steps
+[mcmc] The run has converged!
+[mcmc] Sampling complete after 12720 accepted steps.
+/sps/planck/Temp/garrido.d/development/toy_likelihood/software/likelihood_utils.py:150: RuntimeWarning: invalid value encountered in true_divide
+  plus = Cl_plus["te"]/np.sqrt(Cl_plus["tt"]*Cl_plus["ee"])
+/sps/planck/Temp/garrido.d/development/toy_likelihood/software/likelihood_utils.py:151: RuntimeWarning: invalid value encountered in true_divide
+  minus = Cl_minus["te"]/np.sqrt(Cl_minus["tt"]*Cl_minus["ee"])

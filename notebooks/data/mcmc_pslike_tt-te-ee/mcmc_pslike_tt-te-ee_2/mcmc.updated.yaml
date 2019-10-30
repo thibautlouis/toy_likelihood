@@ -1,0 +1,132 @@
+theory:
+  camb:
+    extra_args: null
+    input_params:
+    - tau
+    - mnu
+    - omk
+    - r
+    - cosmomc_theta
+    - As
+    - ns
+    - ombh2
+    - omch2
+    - Alens
+    output_params:
+    - H0
+    path: null
+    renames:
+      omegabh2: ombh2
+      omegach2: omch2
+      omegal: omega_de
+      omegak: omk
+      yhe: YHe
+      yheused: YHe
+      YpBBN: Y_p
+      zrei: zre
+    speed: 0.3
+    stop_at_error: false
+    use_planck_names: false
+likelihood:
+  chi2:
+    external: true
+    input_params: []
+    output_params: []
+    speed: -1
+    stop_at_error: false
+sampler:
+  mcmc:
+    Rminus1_cl_level: 0.95
+    Rminus1_cl_stop: 0.2
+    Rminus1_last: .inf
+    Rminus1_single_split: 4
+    Rminus1_stop: 0.01
+    blocking: null
+    blocks: null
+    burn_in: 20d
+    callback_every: null
+    callback_function: null
+    check_every: 40d
+    converged: null
+    covmat: null
+    covmat_params: null
+    drag: false
+    drag_limits:
+    - 1
+    - 10
+    i_last_slow_block: null
+    learn_proposal: true
+    learn_proposal_Rminus1_max: 2.0
+    learn_proposal_Rminus1_max_early: 30.0
+    learn_proposal_Rminus1_min: 0.0
+    max_samples: .inf
+    max_tries: 40d
+    mpi_size: null
+    output_every: 20
+    oversample: false
+    oversampling_factors: null
+    proposal_scale: 2.4
+    seed: null
+params:
+  tau:
+    value: 0.0544
+  mnu:
+    value: 0.06
+  omk:
+    value: 0
+    renames:
+    - omegak
+  r:
+    value: 0
+  cosmomc_theta:
+    prior:
+      max: 0.0105
+      min: 0.0103
+    latex: \theta_\mathrm{MC}
+    proposal: 5.322871385285019e-07
+  logA:
+    prior:
+      max: 3.1
+      min: 3.0
+    drop: true
+    latex: \log(10^{10} A_\mathrm{s})
+    proposal: 0.0011394363059076666
+  As:
+    value: 'lambda logA: 1e-10*np.exp(logA)'
+    latex: A_\mathrm{s}
+    derived: true
+  ns:
+    prior:
+      max: 1.1
+      min: 0.9
+    latex: n_\mathrm{s}
+    proposal: 0.0010758437568370433
+  ombh2:
+    prior:
+      max: 0.027
+      min: 0.017
+    latex: \Omega_\mathrm{b}h^2
+    proposal: 9.647018023431215e-06
+    renames:
+    - omegabh2
+  omch2:
+    prior:
+      max: 0.15
+      min: 0.09
+    latex: \Omega_\mathrm{c}h^2
+    proposal: 0.00023721074449701762
+    renames:
+    - omegach2
+  Alens:
+    prior:
+      max: 1.5
+      min: 0.5
+    latex: A_\mathrm{L}
+    proposal: 0.005862448260898677
+  H0:
+    latex: H_0
+    derived: true
+debug: false
+force: true
+output: mcmc
+resume: false
