@@ -185,7 +185,7 @@ def main():
     parser.add_argument("--use-fisher-covmat", help="Use covariance matrix from Fisher calculation as proposal",
                         default=False, required=False, action="store_true")
     parser.add_argument("-i","--sim-id", help="Simulation number",
-                        default=None, required=True)
+                        default=None)
     args = parser.parse_args()
 
     with open(args.yaml_file, "r") as stream:
