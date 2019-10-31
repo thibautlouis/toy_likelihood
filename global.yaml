@@ -41,7 +41,6 @@ data:
   data_folder: like_products
   select: tt-te-ee
   # Bbl range
-  lmin: 2
   lmax: 6002
 
 
@@ -116,12 +115,7 @@ cobaya:
     # Derived
     H0:
       latex: H_0
-    # Foregrounds
-    a_tSZ:
-      prior:
-        min: 0
-        max: 6
-      proposal: 1
+
   theory:
     camb:
       stop_at_error: False

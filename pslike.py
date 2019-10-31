@@ -1,6 +1,5 @@
 """
-Adapted from https://github.com/xgarrido/beyondCV/blob/master/beyondCV/beyondCV.py
-and https://github.com/xgarrido/correlation_coeff_cosmo/blob/master/corrcoeff/corrcoeff.py
+Inspired from https://github.com/xgarrido/beyondCV/blob/master/beyondCV/beyondCV.py
 """
 import numpy as np
 import pylab as plt
@@ -65,7 +64,7 @@ def prepare_data(setup, sim_id=None):
 def get_fg_model(setup, fg_param):
 
     data = setup["data"]
-    lmin, lmax = data["lmin"], data["lmax"]
+    lmin, lmax = 2, data["lmax"]
     l = np.arange(lmin, lmax)
 
     foregrounds = setup["foregrounds"]
@@ -117,17 +116,16 @@ def get_fg_model(setup, fg_param):
 
     return fg_model
 
-
 def sampling(setup):
 
     data = setup["data"]
-    lmin, lmax = data["lmin"], data["lmax"]
+    lmin, lmax = 2, data["lmax"]
     select = data["select"]
     spec_list= data["spec_list"]
 
     data_vec, inv_cov, Bbl = data["data_vec"], data["inv_cov"], data["Bbl"]
 
-    def chi2(a_tSZ, a_kSZ, a_p, beta_p, a_c, beta_c, n_CIBC, a_s, a_g, T_d,
+    def chi2(a_tSZ, a_kSZ, a_p, beta_p, a_c, beta_c, n_CIBC, a_s, T_d,
              _theory={"Cl": {"tt": lmax, "ee": lmax, "te": lmax}}):
 
         # Get nuisance parameters
@@ -156,12 +154,7 @@ def sampling(setup):
                 m1, m2 = spec.split('x')
                 f1, f2 = int(m1.split('_')[1]), int(m2.split('_')[1])
                 th_vec = np.append(th_vec, np.dot(Bbl[select,spec], Dls_theo[select]+fg_model[select,"all",f1,f2]))
-                plt.semilogy()
-                plt.plot(fg_model[select,"all",f1,f2],label='%s %s'%(f1,f2))
-
-            plt.plot(Dls_theo[select])
-            plt.legend()
-            plt.show()
+       
 
         delta = data_vec-th_vec
         chi2_value = np.dot(delta, inv_cov.dot(delta))
@@ -181,6 +174,8 @@ def main():
                         default=None, required=True)
     parser.add_argument("--debug", help="Check chi2 with respect to input parameters",
                         default=False, required=False, action="store_true")
+    parser.add_argument("--fisher", help="Check chi2 with respect to input parameters",
+                        default=False, required=False, action="store_true")
     parser.add_argument("--do-mcmc", help="Use MCMC sampler",
                         default=False, required=False, action="store_true")
     parser.add_argument("--get-input-spectra", help="return input spectra corresponding to the sim parameters",
@@ -197,7 +192,7 @@ def main():
         setup = yaml.load(stream, Loader=yaml.FullLoader)
 
     if args.get_input_spectra:
-        likelihood_utils.write_simu_cls(setup, lmax=9000, out_dir=args.output_base_dir + '/sim_spectra')
+        likelihood_utils.write_input_cls(setup, lmax=9000, out_dir=args.output_base_dir + '/input_spectra')
         return
 
     # Prepare data
@@ -206,6 +201,13 @@ def main():
     if args.debug:
         likelihood_utils.debug(setup)
         return
+
+    if args.fisher:
+        params = setup.get("cobaya").get("params")
+        covmat_params = [k for k, v in params.items() if isinstance(v, dict) and "prior" in v.keys() and "proposal" not in v.keys()]
+        covmat=likelihood_utils.fisher(setup, covmat_params)
+        return
+
 
     # Store configuration & data
     import pickle
@@ -217,7 +219,9 @@ def main():
         params = setup.get("cobaya").get("params")
         covmat_params = [k for k, v in params.items() if isinstance(v, dict)
                          and "prior" in v.keys() and "proposal" not in v.keys()]
+                         
         print("Sampling over", covmat_params, "parameters")
+        
         if args.use_fisher_covmat:
             covmat = likelihood_utils.fisher(setup, covmat_params)
             for i, p in enumerate(covmat_params):
