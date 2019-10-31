@@ -154,7 +154,7 @@ def sampling(setup):
                 m1, m2 = spec.split('x')
                 f1, f2 = int(m1.split('_')[1]), int(m2.split('_')[1])
                 th_vec = np.append(th_vec, np.dot(Bbl[select,spec], Dls_theo[select]+fg_model[select,"all",f1,f2]))
-       
+
 
         delta = data_vec-th_vec
         chi2_value = np.dot(delta, inv_cov.dot(delta))
@@ -184,7 +184,7 @@ def main():
                         default=".", required=False)
     parser.add_argument("--use-fisher-covmat", help="Use covariance matrix from Fisher calculation as proposal",
                         default=False, required=False, action="store_true")
-    parser.add_argument("-id","--sim-id", help="Simulation number",
+    parser.add_argument("-i","--sim-id", help="Simulation number",
                         default=None, required=True)
     args = parser.parse_args()
 
@@ -219,9 +219,9 @@ def main():
         params = setup.get("cobaya").get("params")
         covmat_params = [k for k, v in params.items() if isinstance(v, dict)
                          and "prior" in v.keys() and "proposal" not in v.keys()]
-                         
+
         print("Sampling over", covmat_params, "parameters")
-        
+
         if args.use_fisher_covmat:
             covmat = likelihood_utils.fisher(setup, covmat_params)
             for i, p in enumerate(covmat_params):
