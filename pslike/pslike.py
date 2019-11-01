@@ -168,20 +168,20 @@ def sampling(setup):
 def main():
     import argparse
     parser = argparse.ArgumentParser(description="SO python likelihood")
-    parser.add_argument("-y", "--yaml-file", help="Yaml file holding sim/minization setup",
+    parser.add_argument("-y", "--yaml-file", help="Yaml file holding simulation/sampling setup",
                         default=None, required=True)
     parser.add_argument("--debug", help="Check chi2 with respect to input parameters",
-                        default=False, required=False, action="store_true")
-    parser.add_argument("--fisher", help="Check chi2 with respect to input parameters",
-                        default=False, required=False, action="store_true")
+                        default=False, action="store_true")
+    parser.add_argument("--fisher", help="Print parameter standard deviations from Fisher matrix",
+                        default=False, action="store_true")
     parser.add_argument("--do-mcmc", help="Use MCMC sampler",
-                        default=False, required=False, action="store_true")
+                        default=False, action="store_true")
     parser.add_argument("--get-input-spectra", help="return input spectra corresponding to the sim parameters",
-                        default=False, required=False, action="store_true")
+                        default=False, action="store_true")
     parser.add_argument("--output-base-dir", help="Set the output base dir where to store results",
-                        default=".", required=False)
+                        default=".")
     parser.add_argument("--use-fisher-covmat", help="Use covariance matrix from Fisher calculation as proposal",
-                        default=False, required=False, action="store_true")
+                        default=False, action="store_true")
     parser.add_argument("-i","--sim-id", help="Simulation number",
                         default=None)
     args = parser.parse_args()

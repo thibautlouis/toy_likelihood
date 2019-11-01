@@ -1,0 +1,68 @@
+#+TITLE: Toy likelihood for Simons Observatory
+
+* Installating the code
+** Using =pip=
+Installing the python module should be as easy as doing
+#+BEGIN_SRC shell
+  $ pip install git+https://github.com/thibautlouis/toy_likelihood.git
+#+END_SRC
+if you are a =sudo= user or you can install it as a normal user by doing
+#+BEGIN_SRC shell
+  $ pip install --user git+https://github.com/thibautlouis/toy_likelihood.git
+#+END_SRC
+
+If you plan to change things inside and/or to develop, you should first clone this repository or
+your fork with
+#+BEGIN_SRC shell
+  $ git clone https://github.com/xgarrido/correlation_coeff_cosmo.git /where/to/store/toy_likelihood
+#+END_SRC
+You should then create a virtual environment to make sure your soft is properly encapsulated and is
+not polluted by third party softwares (such as another =camb= installation)
+#+BEGIN_SRC shell
+  $ python3 -m venv /where/to/put/you/virtual/env
+#+END_SRC
+and after having loaded your new virtual env.
+#+BEGIN_SRC shell
+  $ source /where/to/put/you/virtual/env/bin/activate
+#+END_SRC
+you should install this code in develop mode /i.e./
+#+BEGIN_SRC shell
+  $ pip install -e /where/to/store/toy_likelihood
+#+END_SRC
+
+* Running the code
+
+You can either run the =pslike.py= file by doing
+#+BEGIN_SRC shell
+  $ python /where/to/store/toy_likelihood/pslike/pslike.py [OPTIONS]
+#+END_SRC
+of by using the =pslike= executable file. If you do so, you can get option parameters by typing
+#+BEGIN_SRC shell
+  $ pslike --help
+    usage: pslike [-h] -y YAML_FILE [--debug] [--fisher] [--do-mcmc]
+                  [--get-input-spectra] [--output-base-dir OUTPUT_BASE_DIR]
+                  [--use-fisher-covmat] [-i SIM_ID]
+
+    SO python likelihood
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      -y YAML_FILE, --yaml-file YAML_FILE
+                            Yaml file holding simulation/sampling setup
+      --debug               Check chi2 with respect to input parameters
+      --fisher              Print parameter standard deviations from Fisher
+                            matrix
+      --do-mcmc             Use MCMC sampler
+      --get-input-spectra   Return input spectra corresponding to the sim
+                            parameters
+      --output-base-dir OUTPUT_BASE_DIR
+                            Set the output base dir where to store results
+      --use-fisher-covmat   Use covariance matrix from Fisher calculation as
+                            proposal
+      -i SIM_ID, --sim-id SIM_ID
+                            Simulation number
+#+END_SRC
+
+The =yaml= files holds the simulation configuration and the =cobaya= sampling setup. An example,
+=global.yaml= is provided within the repository with the default \Lambda{}CDM parameters used in this
+analysis.
