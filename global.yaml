@@ -10,11 +10,8 @@ simulation:
     ombh2         : 0.02237
     omch2         : 0.1200
     ns            : 0.9649
+    Alens         : 1.
     tau           : &tau 0.0544
-    mnu           : &mnu 0.06
-    omk           : &omk 0
-    r             : &r 0
-    Alens         : &Alens 1.
   fg_parameters:
     a_tSZ  : 3.30
     a_kSZ  : 1.60
@@ -22,10 +19,9 @@ simulation:
     beta_p : 2.08
     a_c    : 4.90
     beta_c : 2.20
-    n_CIBC : 1.20
+    n_CIBC : &n_CIBC 1.20
     a_s    : 3.10
-    a_g    : 0.88
-    T_d    : 9.60
+    T_d    : &T_d 9.60
 
 ##############################
 # Experimental configuration
@@ -41,7 +37,6 @@ data:
   data_folder: like_products
   select: tt-te-ee
   # Bbl range
-  lmin: 2
   lmax: 6002
 
 
@@ -73,11 +68,6 @@ cobaya:
   force: True
 
   params:
-    # Fixed
-    tau   : *tau
-    mnu   : *mnu
-    omk   : *omk
-    r     : *r
     # Sampled
     cosmomc_theta:
       prior:
@@ -113,15 +103,58 @@ cobaya:
         min: 0.5
         max: 1.5
       latex: A_\mathrm{L}
+    tau:
+      prior:
+        dist: norm
+        loc: *tau
+        scale: 0.0073
+      proposal: 0.0073
+      latex: \tau_\mathrm{reio}
     # Derived
     H0:
       latex: H_0
     # Foregrounds
     a_tSZ:
       prior:
-        min: 0
-        max: 6
-      proposal: 1
+        min: 3.0
+        max: 3.6
+      latex: a_\mathrm{tSZ}
+    a_kSZ:
+      prior:
+        min: 1.4
+        max: 1.8
+      latex: a_\mathrm{kSZ}
+    a_p:
+      prior:
+        min: 6.2
+        max: 7.6
+      latex: a_p
+    beta_p:
+      prior:
+        min: 1.8
+        max: 2.2
+      latex: \beta_p
+    a_c:
+      prior:
+        min: 4.4
+        max: 5.4
+      latex: a_c
+    beta_c:
+      prior:
+        min: 2.0
+        max: 2.4
+      latex: \beta_c
+    n_CIBC:
+      value: *n_CIBC
+      latex: n_\mathrm{CIBC}
+    a_s:
+      prior:
+        min: 2.8
+        max: 3.4
+      latex: a_s
+    T_d:
+      value: *T_d
+      latex: T_d
   theory:
     camb:
       stop_at_error: False
