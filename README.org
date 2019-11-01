@@ -11,24 +11,29 @@ if you are a =sudo= user or you can install it as a normal user by doing
   $ pip install --user git+https://github.com/thibautlouis/toy_likelihood.git
 #+END_SRC
 
-If you plan to change things inside and/or to develop, you should first clone this repository or
-your fork with
+** Development mode
+If you plan to change things inside this code and/or to develop, you should first clone this
+repository or your personal fork with
 #+BEGIN_SRC shell
   $ git clone https://github.com/xgarrido/correlation_coeff_cosmo.git /where/to/store/toy_likelihood
 #+END_SRC
-You should then create a virtual environment to make sure your soft is properly encapsulated and is
-not polluted by third party softwares (such as another =camb= installation)
-#+BEGIN_SRC shell
-  $ python3 -m venv /where/to/put/you/virtual/env
-#+END_SRC
-and after having loaded your new virtual env.
-#+BEGIN_SRC shell
-  $ source /where/to/put/you/virtual/env/bin/activate
-#+END_SRC
-you should install this code in develop mode /i.e./
+You can install the =toy_likelihood= module in develop mode /i.e./
 #+BEGIN_SRC shell
   $ pip install -e /where/to/store/toy_likelihood
 #+END_SRC
+Then, you will be able to modify it directly without installing the code at every modification.
+
+*N.B.* To avoid conflicts with global python modules such as global installation of =camb=, you can
+create a virtual environment to make sure your soft is properly encapsulated
+#+BEGIN_SRC shell
+  $ python3 -m venv /where/to/put/you/virtual/env
+#+END_SRC
+After having loaded your new virtual env
+#+BEGIN_SRC shell
+  $ source /where/to/put/you/virtual/env/bin/activate
+#+END_SRC
+you can install the code and its dependencies with the above =pip install -e= command and everything
+will be located in =/where/to/put/you/virtual/env=.
 
 * Running the code
 
