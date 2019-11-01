@@ -36,7 +36,7 @@ You can either run the =pslike.py= file by doing
 #+BEGIN_SRC shell
   $ python /where/to/store/toy_likelihood/pslike/pslike.py [OPTIONS]
 #+END_SRC
-of by using the =pslike= executable file. If you do so, you can get option parameters by typing
+or by using the =pslike= executable file. If you do so, you can get option parameters by typing
 #+BEGIN_SRC shell
   $ pslike --help
     usage: pslike [-h] -y YAML_FILE [--debug] [--fisher] [--do-mcmc]
