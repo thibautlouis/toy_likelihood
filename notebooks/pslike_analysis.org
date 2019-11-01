@@ -9,10 +9,8 @@
 #+END_SRC
 
 * Definitions
-Define default data directory and what CMB parameter names are.
-
+Define CMB & nuisance parameter names.
 #+BEGIN_SRC ipython :session :results none
-  file_root = "./data/mcmc_pslike_tt-te-ee/mcmc"
   cosmo_params = [
       "cosmomc_theta",
       "logA",
@@ -20,23 +18,36 @@ Define default data directory and what CMB parameter names are.
       "ombh2",
       "omch2",
       "H0",
-      "Alens"
+      "Alens",
+      "tau"
+  ]
+  nuisance_params = [
+      "a_tSZ",
+      "a_kSZ",
+      "a_p",
+      "beta_p",
+      "a_c",
+      "beta_c",
+      "a_s",
+      # "n_CIBC",
+      # "T_d"
   ]
 #+END_SRC
 
 * MCMC chains
 Have a look at how chains evolve with time and check convergence or not.
 
-#+BEGIN_SRC ipython :session :results raw none
+#+BEGIN_SRC ipython :session :results none
   def plot_chains(file_root, params, nrow=None, ncol=None):
-    from getdist.chains import chainFiles
-    files = chainFiles(file_root, separator=".")
+    import glob
+    files = sorted(glob.glob(file_root + "*.txt"))
 
     nrow = len(params)//2 if nrow is None else nrow
     ncol = len(params)//2 if ncol is None else ncol
     plt.figure(figsize=(15, 10))
+    ax = [plt.subplot(nrow, ncol, i+1) for i in range(len(params))]
 
-    # Loop over files independantly
+    # Loop over files independently
     for f in files:
       sample = loadMCSamples(f[:-4])
       color = "C{}".format(f.split(".")[-2])
@@ -45,29 +56,31 @@ Have a look at how chains evolve with time and check convergence or not.
       values = sample.getParams()
 
       # Get associated LaTeX labels
-      labels = sample.paramNames.parsWithNames(cosmo_params)
+      labels = sample.paramNames.parsWithNames(params)
       for i, p in enumerate(params):
-        ax = plt.subplot(nrow, ncol, i+1)
-        ax.set_ylabel(labels[i].latexLabel())
-        ax.plot(getattr(values, p), alpha=0.75, color=color)
+        ax[i].set_ylabel(labels[i].latexLabel())
+        ax[i].plot(getattr(values, p), alpha=0.75, color=color)
 
     plt.tight_layout()
 #+END_SRC
 
-Plot chains for the CMB parameters
+Plot chains for the CMB a nuisance parameters given a simulation id
 #+BEGIN_SRC ipython :session :results raw drawer
-  plot_chains(file_root, params=cosmo_params)
+  sim_id = 6
+  plot_chains("./data/mcmc_pslike_tt-te-ee_fg_tt/sim_{}/mcmc".format(sim_id), params=cosmo_params+nuisance_params, ncol=4)
 #+END_SRC
 
 #+RESULTS:
 :results:
-# Out[243]:
-[[file:./obipy-resources/d7nutU.png]]
+# Out[111]:
+[[file:./obipy-resources/tZoE2K.png]]
 :end:
+
 * MCMC distributions
+
 Load the different chains into one weighted sample with burnin corresponding to 40% of the chains.
 #+BEGIN_SRC ipython :session :results none
-  sample = loadMCSamples(file_root, settings={"ignore_rows": 0.4})
+  sample = loadMCSamples("./data/mcmc_pslike_tt-te-ee_fg_tt/sim_6/mcmc", settings={"ignore_rows": 0.4})
 #+END_SRC
 
 Show input values from simulation.
@@ -80,7 +93,18 @@ Show input values from simulation.
           "omch2": 0.1200,
           "ns": 0.9649,
           "Alens": 1.0,
-          "H0": 67.36
+          "tau": 0.0544,
+          "H0": 67.36,
+          "a_tSZ": 3.30,
+          "a_kSZ": 1.60,
+          "a_p": 6.90,
+          "beta_p": 2.08,
+          "a_c": 4.90,
+          "beta_c": 2.20,
+          "n_CIBC": 1.20,
+          "a_s": 3.10,
+          "T_d": 9.60
+
       }
       for i, p in enumerate(params):
           x = inputs.get(p, np.nan)
@@ -91,43 +115,100 @@ Show input values from simulation.
               if ax: ax.axhline(x, **kwargs)
 #+END_SRC
 
+Define global plot settings
+#+BEGIN_SRC ipython :session :results none
+    from getdist.plots import GetDistPlotSettings
+    plot_settings = GetDistPlotSettings()
+    plot_settings.num_plot_contours = 3
+    plot_settings.solid_colors = "tab10"
+    plot_settings.line_styles = "tab10"
+#+END_SRC
+
 ** Triangle plot
+
+Plot posterior distributions of CMB parameters
 #+BEGIN_SRC ipython :session :results raw drawer
-  g = plots.getSubplotPlotter()
-  g.settings.num_plot_contours = 3
-  g.settings.lineM = ["-CO"]
-  g.triangle_plot(sample, cosmo_params, filled=True, colors=["C0"])
+  g = plots.get_subplot_plotter(settings=plot_settings)
+  g.triangle_plot(sample, cosmo_params, filled=True,
+                  colors=["C0"], diag1d_kwargs={"colors":["C0"]})
   show_input(g, cosmo_params)
 #+END_SRC
 
 #+RESULTS:
 :results:
-# Out[279]:
-[[file:./obipy-resources/tISbhO.png]]
+# Out[116]:
+[[file:./obipy-resources/ViiJfR.png]]
+:end:
+
+Do the same for nuisance parameters
+#+BEGIN_SRC ipython :session :results raw drawer
+  g.triangle_plot(sample, nuisance_params, filled=True,
+                  colors=["C2"], diag1d_kwargs={"colors":["C2"]})
+  show_input(g, nuisance_params)
+#+END_SRC
+
+#+RESULTS:
+:results:
+# Out[118]:
+[[file:./obipy-resources/zCDkz2.png]]
 :end:
 
 ** Table
+Fisher results
 #+BEGIN_SRC ipython :session :results none
-from IPython.display import HTML, display
-import tabulate
-table = sample.getTable().tableParamNames
-results = [[par.latexLabel(), par.mean, par.err] for j, par in enumerate(table.names)
-                                              if table.name(j) in cosmo_params]
-display(HTML(tabulate.tabulate(results, headers=["Parameter", "mean", "std."], tablefmt="html")))
+  fisher = {
+      "cosmomc_theta": 1.4486065596773747e-06,
+      "logA": 0.0036317591906040248,
+      "ombh2": 6.536685599536575e-05,
+      "omch2": 0.0011424383079735975,
+      "ns": 0.0032727928988092654,
+      "Alens": 0.02218573265886299,
+      "tau": None,
+      "H0": None,
+      "a_tSZ": 0.0458633315116957,
+      "a_kSZ": 0.10197033488579488,
+      "a_p": 0.07612743384341107,
+      "beta_p": 0.014099541556253719,
+      "a_c": 0.12237773103689452,
+      "beta_c":0.03130983994013702,
+      "n_CIBC": None,
+      "a_s": 0.011254308374681048,
+      "T_d": None
+
+  }
+#+END_SRC
+
+Show table for mean value and standard deviations
+#+BEGIN_SRC ipython :session :results none
+  from IPython.display import HTML, display
+  import tabulate
+  table = sample.getTable().tableParamNames
+  results = [[par.latexLabel(), par.mean, par.err, fisher[table.name(j)]]
+              for j, par in enumerate(table.names)
+              if table.name(j) in cosmo_params+nuisance_params]
+  display(HTML(tabulate.tabulate(results, headers=["Parameter", "mean", "std."], tablefmt="html")))
 #+END_SRC
 
 *** Org table                                                    :noexport:
 #+BEGIN_SRC ipython :session :results raw output
-  print(tabulate.tabulate(results, headers=["Parameter", "mean", "std."], tablefmt="orgtbl"))
+  print(tabulate.tabulate(results, headers=["Parameter", "mean", "std.", "fisher"], tablefmt="orgtbl"))
 #+END_SRC
 
 #+RESULTS:
-| Parameter                    |      mean |        std. |
-|------------------------------+-----------+-------------|
-| $\theta_\mathrm{MC}$         | 0.0104072 | 1.40964e-06 |
-| $\log(10^{10} A_\mathrm{s})$ |   3.04293 |  0.00355408 |
-| $n_\mathrm{s}$               |   0.96668 |   0.0031741 |
-| $\Omega_\mathrm{b}h^2$       |  0.022315 | 6.16766e-05 |
-| $\Omega_\mathrm{c}h^2$       |  0.120931 |  0.00110346 |
-| $A_\mathrm{L}$               |    1.0096 |   0.0211548 |
-| $H_0$                        |   66.9218 |    0.426916 |
+| Parameter                    |      mean |        std. |      fisher |
+|------------------------------+-----------+-------------+-------------|
+| $\theta_\mathrm{MC}$         | 0.0104095 | 6.22321e-07 | 1.44861e-06 |
+| $\log(10^{10} A_\mathrm{s})$ |   3.06035 |   0.0175271 |  0.00363176 |
+| $n_\mathrm{s}$               |  0.963585 |  0.00171811 |  0.00327279 |
+| $\Omega_\mathrm{b}h^2$       | 0.0223613 | 6.66206e-05 | 6.53669e-05 |
+| $\Omega_\mathrm{c}h^2$       |  0.120044 | 0.000273744 |  0.00114244 |
+| $A_\mathrm{L}$               |  0.996998 |   0.0170252 |   0.0221857 |
+| $\tau_\mathrm{reio}$         | 0.0621519 |  0.00893131 |             |
+| $a_\mathrm{tSZ}$             |   3.26555 |   0.0369705 |   0.0458633 |
+| $a_\mathrm{kSZ}$             |   1.65167 |    0.108337 |     0.10197 |
+| $a_p$                        |   7.02611 |    0.100917 |   0.0761274 |
+| $\beta_p$                    |   2.06093 |   0.0202256 |   0.0140995 |
+| $a_c$                        |    4.7732 |   0.0845655 |    0.122378 |
+| $\beta_c$                    |    2.2315 |   0.0287249 |   0.0313098 |
+| $a_s$                        |   3.12177 |    0.006544 |   0.0112543 |
+| $H_0$                        |   67.3453 |    0.133886 |             |
