@@ -2,12 +2,11 @@
 Inspired from https://github.com/xgarrido/beyondCV/blob/master/beyondCV/beyondCV.py
 """
 import numpy as np
-import pylab as plt
-import likelihood_utils
-import yaml
-import argparse
-import time
 
+try:
+    import likelihood_utils
+except:
+    from pslike import likelihood_utils
 
 def prepare_data(setup, sim_id=None):
 
@@ -146,15 +145,14 @@ def sampling(setup):
         if select == "tt-te-ee":
             for s in spectra:
                 for spec in spec_list:
-                    m1, m2 = spec.split('x')
-                    f1, f2 = int(m1.split('_')[1]), int(m2.split('_')[1])
+                    m1, m2 = spec.split("x")
+                    f1, f2 = int(m1.split("_")[1]), int(m2.split("_")[1])
                     th_vec = np.append(th_vec, np.dot(Bbl[s,spec], Dls_theo[s]+fg_model[s,"all",f1,f2]))
         else:
             for spec in spec_list:
-                m1, m2 = spec.split('x')
-                f1, f2 = int(m1.split('_')[1]), int(m2.split('_')[1])
+                m1, m2 = spec.split("x")
+                f1, f2 = int(m1.split("_")[1]), int(m2.split("_")[1])
                 th_vec = np.append(th_vec, np.dot(Bbl[select,spec], Dls_theo[select]+fg_model[select,"all",f1,f2]))
-
 
         delta = data_vec-th_vec
         chi2_value = np.dot(delta, inv_cov.dot(delta))
@@ -168,26 +166,27 @@ def sampling(setup):
 
 
 def main():
-
+    import argparse
     parser = argparse.ArgumentParser(description="SO python likelihood")
-    parser.add_argument("-y", "--yaml-file", help="Yaml file holding sim/minization setup",
+    parser.add_argument("-y", "--yaml-file", help="Yaml file holding simulation/sampling setup",
                         default=None, required=True)
     parser.add_argument("--debug", help="Check chi2 with respect to input parameters",
-                        default=False, required=False, action="store_true")
-    parser.add_argument("--fisher", help="Check chi2 with respect to input parameters",
-                        default=False, required=False, action="store_true")
+                        default=False, action="store_true")
+    parser.add_argument("--fisher", help="Print parameter standard deviations from Fisher matrix",
+                        default=False, action="store_true")
     parser.add_argument("--do-mcmc", help="Use MCMC sampler",
-                        default=False, required=False, action="store_true")
+                        default=False, action="store_true")
     parser.add_argument("--get-input-spectra", help="return input spectra corresponding to the sim parameters",
-                            default=False, required=False, action="store_true")
+                        default=False, action="store_true")
     parser.add_argument("--output-base-dir", help="Set the output base dir where to store results",
-                        default=".", required=False)
+                        default=".")
     parser.add_argument("--use-fisher-covmat", help="Use covariance matrix from Fisher calculation as proposal",
-                        default=False, required=False, action="store_true")
+                        default=False, action="store_true")
     parser.add_argument("-i","--sim-id", help="Simulation number",
                         default=None)
     args = parser.parse_args()
 
+    import yaml
     with open(args.yaml_file, "r") as stream:
         setup = yaml.load(stream, Loader=yaml.FullLoader)
 
@@ -205,9 +204,8 @@ def main():
     if args.fisher:
         params = setup.get("cobaya").get("params")
         covmat_params = [k for k, v in params.items() if isinstance(v, dict) and "prior" in v.keys() and "proposal" not in v.keys()]
-        covmat=likelihood_utils.fisher(setup, covmat_params)
+        covmat = likelihood_utils.fisher(setup, covmat_params)
         return
-
 
     # Store configuration & data
     import pickle
@@ -219,9 +217,7 @@ def main():
         params = setup.get("cobaya").get("params")
         covmat_params = [k for k, v in params.items() if isinstance(v, dict)
                          and "prior" in v.keys() and "proposal" not in v.keys()]
-
         print("Sampling over", covmat_params, "parameters")
-
         if args.use_fisher_covmat:
             covmat = likelihood_utils.fisher(setup, covmat_params)
             for i, p in enumerate(covmat_params):
