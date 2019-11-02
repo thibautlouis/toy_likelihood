@@ -226,3 +226,11 @@ param: a_s , sigma: 0.011254308131208781 , Fisher S/N 275.4500733282341
  10582.677995  10582.677995  
 [mcmc] Sampling! (NB: nothing will be printed until 280 burn-in samples have been obtained)
 [mcmc] Finished burn-in phase: discarded 280 accepted steps.
+[mcmc] Checkpoint: 560 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 5.297137 after 560 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 1120 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 15.679142 after 1120 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.

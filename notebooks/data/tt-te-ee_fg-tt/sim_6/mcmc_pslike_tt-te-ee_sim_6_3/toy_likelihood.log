@@ -274,3 +274,19 @@ param: a_s , sigma: 0.011254308131208781 , Fisher S/N 275.4500733282341
 [mcmc] Ready to check convergence and learn a new proposal covmat
 [mcmc] Convergence of means: R-1 = 0.564298 after 6720 accepted steps
 [mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 7280 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.555509 after 7280 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 7840 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.445482 after 7840 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 8400 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.690773 after 8400 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 8960 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.761219 after 8960 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.

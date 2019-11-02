@@ -1,7 +1,7 @@
 sampler:
   mcmc:
     converged: false
-    Rminus1_last: .inf
+    Rminus1_last: 15.679142382459325
     proposal_scale: 2.4
     blocks:
     - - 0
@@ -22,5 +22,5 @@ sampler:
     - 1
     - 1
     i_last_slow_block: null
-    burn_in: 280
+    burn_in: d
     mpi_size: 0
