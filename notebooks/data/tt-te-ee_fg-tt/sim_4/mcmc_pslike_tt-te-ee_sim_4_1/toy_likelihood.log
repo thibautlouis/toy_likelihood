@@ -1,0 +1,268 @@
+
+###################################################################
+# Cosmological and foregrounds parameters used for the simulation
+###################################################################
+
+simulation:
+  cosmo. parameters:
+    cosmomc_theta : 0.0104085
+    logA          : 3.044
+    ombh2         : 0.02237
+    omch2         : 0.1200
+    ns            : 0.9649
+    Alens         : 1.
+    tau           : &tau 0.0544
+  fg_parameters:
+    a_tSZ  : 3.30
+    a_kSZ  : 1.60
+    a_p    : 6.90
+    beta_p : 2.08
+    a_c    : 4.90
+    beta_c : 2.20
+    n_CIBC : &n_CIBC 1.20
+    a_s    : 3.10
+    T_d    : &T_d 9.60
+
+##############################
+# Experimental configuration
+##############################
+
+data:
+  experiments:
+    - LAT
+  freq_LAT:
+    - 93  # GHz
+    - 145 # GHz
+    - 225 # GHz
+  data_folder:  /sps/planck/Temp/garrido.d/development/toy_likelihood/software/like_products
+  select: tt-te-ee
+  # Bbl range
+  lmax: 6002
+
+
+##############################
+# Foregrounds model
+##############################
+
+foregrounds:
+  normalisation:
+    nu_0: 150.0
+    ell_0: 3000
+    T_CMB: 2.725
+  components:
+    tt:
+      - kSZ
+      - cibp
+      - radio
+      - tSZ
+      - cibc
+    te: []
+    ee: []
+
+##############################
+# Cobaya setup
+##############################
+
+cobaya:
+  debug: False
+  force: True
+
+  params:
+    # Sampled
+    cosmomc_theta:
+      prior:
+        min: 0.0103
+        max: 0.0105
+      latex: \theta_\mathrm{MC}
+    logA:
+      prior:
+        min: 3.0
+        max: 3.1
+      drop: True
+      latex: \log(10^{10} A_\mathrm{s})
+    As:
+      value: "lambda logA: 1e-10*np.exp(logA)"
+      latex: A_\mathrm{s}
+    ns:
+      prior:
+        min: 0.9
+        max: 1.1
+      latex: n_\mathrm{s}
+    ombh2:
+      prior:
+        min: 0.017
+        max: 0.027
+      latex: \Omega_\mathrm{b}h^2
+    omch2:
+      prior:
+        min: 0.09
+        max: 0.15
+      latex: \Omega_\mathrm{c}h^2
+    Alens:
+      prior:
+        min: 0.5
+        max: 1.5
+      latex: A_\mathrm{L}
+    tau:
+      prior:
+        dist: norm
+        loc: *tau
+        scale: 0.0073
+      proposal: 0.0073
+      latex: \tau_\mathrm{reio}
+    # Derived
+    H0:
+      latex: H_0
+    # Foregrounds
+    a_tSZ:
+      prior:
+        min: 3.0
+        max: 3.6
+      latex: a_\mathrm{tSZ}
+    a_kSZ:
+      prior:
+        min: 1.0
+        max: 2.2
+      latex: a_\mathrm{kSZ}
+    a_p:
+      prior:
+        min: 6.2
+        max: 7.6
+      latex: a_p
+    beta_p:
+      prior:
+        min: 1.8
+        max: 2.2
+      latex: \beta_p
+    a_c:
+      prior:
+        min: 4.4
+        max: 5.4
+      latex: a_c
+    beta_c:
+      prior:
+        min: 2.0
+        max: 2.4
+      latex: \beta_c
+    n_CIBC:
+      value: *n_CIBC
+      latex: n_\mathrm{CIBC}
+    a_s:
+      prior:
+        min: 2.8
+        max: 3.4
+      latex: a_s
+    T_d:
+      value: *T_d
+      latex: T_d
+  theory:
+    camb:
+      stop_at_error: False
+Sampling over ['cosmomc_theta', 'logA', 'ns', 'ombh2', 'omch2', 'Alens', 'a_tSZ', 'a_kSZ', 'a_p', 'beta_p', 'a_c', 'beta_c', 'a_s'] parameters
+[model] *WARNING* Ignored blocks/options: ['force']
+[prior] *WARNING* No sampled parameters requested! This will fail for non-mock samplers.
+[camb] Importing *global* CAMB.
+[model] *WARNING* Ignored blocks/options: ['force']
+[prior] *WARNING* No sampled parameters requested! This will fail for non-mock samplers.
+[camb] Importing *global* CAMB.
+[model] *WARNING* Ignored blocks/options: ['force']
+[prior] *WARNING* No sampled parameters requested! This will fail for non-mock samplers.
+[camb] Importing *global* CAMB.
+[model] *WARNING* Ignored blocks/options: ['force']
+[prior] *WARNING* No sampled parameters requested! This will fail for non-mock samplers.
+[camb] Importing *global* CAMB.
+[model] *WARNING* Ignored blocks/options: ['force']
+[prior] *WARNING* No sampled parameters requested! This will fail for non-mock samplers.
+[camb] Importing *global* CAMB.
+[model] *WARNING* Ignored blocks/options: ['force']
+[prior] *WARNING* No sampled parameters requested! This will fail for non-mock samplers.
+[camb] Importing *global* CAMB.
+[model] *WARNING* Ignored blocks/options: ['force']
+[prior] *WARNING* No sampled parameters requested! This will fail for non-mock samplers.
+[camb] Importing *global* CAMB.
+[model] *WARNING* Ignored blocks/options: ['force']
+[prior] *WARNING* No sampled parameters requested! This will fail for non-mock samplers.
+[camb] Importing *global* CAMB.
+[model] *WARNING* Ignored blocks/options: ['force']
+[prior] *WARNING* No sampled parameters requested! This will fail for non-mock samplers.
+[camb] Importing *global* CAMB.
+[model] *WARNING* Ignored blocks/options: ['force']
+[prior] *WARNING* No sampled parameters requested! This will fail for non-mock samplers.
+[camb] Importing *global* CAMB.
+[model] *WARNING* Ignored blocks/options: ['force']
+[prior] *WARNING* No sampled parameters requested! This will fail for non-mock samplers.
+[camb] Importing *global* CAMB.
+[model] *WARNING* Ignored blocks/options: ['force']
+[prior] *WARNING* No sampled parameters requested! This will fail for non-mock samplers.
+[camb] Importing *global* CAMB.
+param: cosmomc_theta , sigma: 1.4486067298939795e-06 , Fisher S/N 7185.179928552297
+param: logA , sigma: 0.003631757844263824 , Fisher S/N 838.1616094828136
+param: ns , sigma: 0.003272794742769454 , Fisher S/N 294.82447749946493
+param: ombh2 , sigma: 6.53668817891666e-05 , Fisher S/N 342.2222291733584
+param: omch2 , sigma: 0.0011424386111289011 , Fisher S/N 105.03846668962103
+param: Alens , sigma: 0.022185741116587002 , Fisher S/N 45.073995713956904
+param: a_tSZ , sigma: 0.045863330996586966 , Fisher S/N 71.95290722005294
+param: a_kSZ , sigma: 0.10197033817089268 , Fisher S/N 15.690837440575619
+param: a_p , sigma: 0.07612743222472637 , Fisher S/N 90.63749818372126
+param: beta_p , sigma: 0.014099541277495565 , Fisher S/N 147.5225299222969
+param: a_c , sigma: 0.12237772921661125 , Fisher S/N 40.039965044022786
+param: beta_c , sigma: 0.031309839482997134 , Fisher S/N 70.26545125517856
+param: a_s , sigma: 0.011254308131208798 , Fisher S/N 275.45007332823366
+[output] Output to be read-from/written-into folder '/sps/planck/Temp/garrido.d/development/toy_likelihood/output/mcmc_pslike_tt-te-ee_sim_4_1', with prefix 'mcmc'
+[chi2] Initialised external likelihood.
+[camb] Importing *global* CAMB.
+[likelihood] The theory code will compute the following products, requested by the likelihoods: ['H0', 'Cl']
+[mcmc] Covariance matrix not present. We will start learning the covariance of the proposal earlier: R-1 = 30 (was 2).
+[mcmc] Initial point:
+[prior] Reference values or pdf's for some parameters were not provided. Sampling from the prior instead for those parameters.
+[mcmc] 
+ weight  minuslogpost  cosmomc_theta      logA        ns     ombh2     omch2     Alens       tau     a_tSZ     a_kSZ  \
+    1.0    4210.37422       0.010381  3.035534  1.005365  0.021738  0.144599  1.106599  0.055161  3.099884  1.837436   
+
+      a_p    beta_p       a_c   beta_c       a_s            As         H0  minuslogprior  minuslogprior__0  \
+ 6.626697  2.033491  4.800153  2.33184  2.922228  2.081209e-09  58.294792      -26.17875         -26.17875   
+
+       chi2  chi2__chi2  
+ 8473.10594  8473.10594  
+[mcmc] Sampling! (NB: nothing will be printed until 280 burn-in samples have been obtained)
+[mcmc] Finished burn-in phase: discarded 280 accepted steps.
+[mcmc] Checkpoint: 560 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 18.196229 after 560 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 1120 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 20.700940 after 1120 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 1680 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 4.657501 after 1680 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 2240 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 2.261822 after 2240 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 2800 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.909082 after 2800 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 3360 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.733021 after 3360 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 3920 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.667187 after 3920 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 4480 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.416895 after 4480 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 5040 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.306916 after 5040 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.
+[mcmc] Checkpoint: 5600 samples accepted.
+[mcmc] Ready to check convergence and learn a new proposal covmat
+[mcmc] Convergence of means: R-1 = 0.399269 after 5600 accepted steps
+[mcmc] Updated covariance matrix of proposal pdf.

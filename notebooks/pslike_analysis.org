@@ -64,23 +64,25 @@ Have a look at how chains evolve with time and check convergence or not.
     plt.tight_layout()
 #+END_SRC
 
-Plot chains for the CMB a nuisance parameters given a simulation id
+Plot chains for the CMB & nuisance parameters given a simulation id (up to 9 so far)
 #+BEGIN_SRC ipython :session :results raw drawer
-  sim_id = 6
-  plot_chains("./data/mcmc_pslike_tt-te-ee_fg_tt/sim_{}/mcmc".format(sim_id), params=cosmo_params+nuisance_params, ncol=4)
+  sim_id = 0
+  plot_chains("./data/tt-te-ee_fg-tt/sim_{}/mcmc".format(sim_id), params=cosmo_params+nuisance_params, ncol=4)
 #+END_SRC
 
 #+RESULTS:
 :results:
-# Out[111]:
-[[file:./obipy-resources/tZoE2K.png]]
+# Out[142]:
+[[file:./obipy-resources/lIHCJO.png]]
 :end:
 
 * MCMC distributions
 
 Load the different chains into one weighted sample with burnin corresponding to 40% of the chains.
 #+BEGIN_SRC ipython :session :results none
-  sample = loadMCSamples("./data/mcmc_pslike_tt-te-ee_fg_tt/sim_6/mcmc", settings={"ignore_rows": 0.4})
+  sim_id = 0
+  sample = loadMCSamples("./data/tt-te-ee_fg-tt/sim_{}/mcmc".format(sim_id),
+                         settings={"ignore_rows": 0.4})
 #+END_SRC
 
 Show input values from simulation.
@@ -131,26 +133,35 @@ Plot posterior distributions of CMB parameters
   g = plots.get_subplot_plotter(settings=plot_settings)
   g.triangle_plot(sample, cosmo_params, filled=True,
                   colors=["C0"], diag1d_kwargs={"colors":["C0"]})
+  # Show input value
   show_input(g, cosmo_params)
+  # Show prior on tau
+  ax = g.subplots[-1, -1]
+  xmin, xmax, ymin, ymax = ax.axis()
+  x = np.linspace(xmin, xmax, 100)
+  from scipy.stats import norm
+  ax.plot(x, 0.018*norm.pdf(x, 0.054, 0.0073), color='gray', ls='--', label=r"$\tau$ prior")
+  ax.legend(loc="upper left", bbox_to_anchor=(1,1))
 #+END_SRC
 
 #+RESULTS:
 :results:
-# Out[116]:
-[[file:./obipy-resources/ViiJfR.png]]
+# Out[136]:
+: <matplotlib.legend.Legend at 0x7f985a2a49d0>
+[[file:./obipy-resources/37x8C6.png]]
 :end:
 
 Do the same for nuisance parameters
 #+BEGIN_SRC ipython :session :results raw drawer
   g.triangle_plot(sample, nuisance_params, filled=True,
-                  colors=["C2"], diag1d_kwargs={"colors":["C2"]})
+                  colors=["C4"], diag1d_kwargs={"colors":["C4"]})
   show_input(g, nuisance_params)
 #+END_SRC
 
 #+RESULTS:
 :results:
-# Out[118]:
-[[file:./obipy-resources/zCDkz2.png]]
+# Out[138]:
+[[file:./obipy-resources/J9e4Pc.png]]
 :end:
 
 ** Table
@@ -186,7 +197,7 @@ Show table for mean value and standard deviations
   results = [[par.latexLabel(), par.mean, par.err, fisher[table.name(j)]]
               for j, par in enumerate(table.names)
               if table.name(j) in cosmo_params+nuisance_params]
-  display(HTML(tabulate.tabulate(results, headers=["Parameter", "mean", "std."], tablefmt="html")))
+  display(HTML(tabulate.tabulate(results, headers=["Parameter", "mean", "std.", "fisher"], tablefmt="html")))
 #+END_SRC
 
 *** Org table                                                    :noexport:
@@ -197,18 +208,18 @@ Show table for mean value and standard deviations
 #+RESULTS:
 | Parameter                    |      mean |        std. |      fisher |
 |------------------------------+-----------+-------------+-------------|
-| $\theta_\mathrm{MC}$         | 0.0104095 | 6.22321e-07 | 1.44861e-06 |
-| $\log(10^{10} A_\mathrm{s})$ |   3.06035 |   0.0175271 |  0.00363176 |
-| $n_\mathrm{s}$               |  0.963585 |  0.00171811 |  0.00327279 |
-| $\Omega_\mathrm{b}h^2$       | 0.0223613 | 6.66206e-05 | 6.53669e-05 |
-| $\Omega_\mathrm{c}h^2$       |  0.120044 | 0.000273744 |  0.00114244 |
-| $A_\mathrm{L}$               |  0.996998 |   0.0170252 |   0.0221857 |
-| $\tau_\mathrm{reio}$         | 0.0621519 |  0.00893131 |             |
-| $a_\mathrm{tSZ}$             |   3.26555 |   0.0369705 |   0.0458633 |
-| $a_\mathrm{kSZ}$             |   1.65167 |    0.108337 |     0.10197 |
-| $a_p$                        |   7.02611 |    0.100917 |   0.0761274 |
-| $\beta_p$                    |   2.06093 |   0.0202256 |   0.0140995 |
-| $a_c$                        |    4.7732 |   0.0845655 |    0.122378 |
-| $\beta_c$                    |    2.2315 |   0.0287249 |   0.0313098 |
-| $a_s$                        |   3.12177 |    0.006544 |   0.0112543 |
-| $H_0$                        |   67.3453 |    0.133886 |             |
+| $\theta_\mathrm{MC}$         | 0.0104079 | 1.39034e-06 | 1.44861e-06 |
+| $\log(10^{10} A_\mathrm{s})$ |   3.04802 |   0.0156679 |  0.00363176 |
+| $n_\mathrm{s}$               |  0.960039 |  0.00322315 |  0.00327279 |
+| $\Omega_\mathrm{b}h^2$       | 0.0224201 | 6.48072e-05 | 6.53669e-05 |
+| $\Omega_\mathrm{c}h^2$       |  0.120795 |  0.00117659 |  0.00114244 |
+| $A_\mathrm{L}$               |   0.98413 |   0.0269242 |   0.0221857 |
+| $\tau_\mathrm{reio}$         | 0.0546079 |  0.00767169 |             |
+| $a_\mathrm{tSZ}$             |    3.3737 |   0.0466726 |   0.0458633 |
+| $a_\mathrm{kSZ}$             |   1.73203 |    0.106254 |     0.10197 |
+| $a_p$                        |   6.88009 |   0.0757952 |   0.0761274 |
+| $\beta_p$                    |   2.08197 |   0.0141737 |   0.0140995 |
+| $a_c$                        |   4.92254 |    0.119851 |    0.122378 |
+| $\beta_c$                    |   2.19853 |   0.0307534 |   0.0313098 |
+| $a_s$                        |   3.08605 |   0.0111938 |   0.0112543 |
+| $H_0$                        |   67.0801 |    0.449506 |             |
