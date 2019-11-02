@@ -71,3 +71,7 @@ or by using the =pslike= executable file. If you do so, you can get option param
 The =yaml= files holds the simulation configuration and the =cobaya= sampling setup. An example,
 =global.yaml= is provided within the repository with the default \Lambda{}CDM parameters used in this
 analysis.
+
+* Analysing results
+
+An interactive notebook can be accessed by following this link [[https://mybinder.org/v2/gh/thibautlouis/toy_likelihood/binder?filepath=notebooks%2Fpslike_analysis.ipynb][https://mybinder.org/badge_logo.svg]]

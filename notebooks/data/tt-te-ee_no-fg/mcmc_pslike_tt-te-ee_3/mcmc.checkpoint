@@ -1,0 +1,17 @@
+sampler:
+  mcmc:
+    converged: true
+    Rminus1_last: 0.00914883076731101
+    proposal_scale: 2.4
+    blocks:
+    - - 0
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+    oversampling_factors:
+    - 1
+    i_last_slow_block: null
+    burn_in: d
+    mpi_size: 0

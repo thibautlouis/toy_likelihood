@@ -1,0 +1,1 @@
+./mcmc_pslike_tt-te-ee_sim_1_1/mcmc.1.txt
