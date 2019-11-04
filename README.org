@@ -74,4 +74,4 @@ analysis.
 
 * Analysing results
 
-An interactive notebook can be accessed by following this link [[https://mybinder.org/v2/gh/thibautlouis/toy_likelihood/binder?filepath=notebooks%2Fpslike_analysis.ipynb][https://mybinder.org/badge_logo.svg]]
+An interactive notebook can be accessed by following this link [[https://mybinder.org/v2/gh/thibautlouis/toy_likelihood/master?filepath=notebooks%2Fpslike_analysis.ipynb][https://mybinder.org/badge_logo.svg]]
