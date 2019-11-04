@@ -44,7 +44,7 @@ You can either run the =pslike.py= file by doing
 or by using the =pslike= executable file. If you do so, you can get option parameters by typing
 #+BEGIN_SRC shell
   $ pslike --help
-    usage: pslike [-h] -y YAML_FILE [--debug] [--fisher] [--do-mcmc]
+    usage: pslike [-h] -y YAML_FILE [--debug] [--liketest] [--fisher] [--do-mcmc]
                   [--get-input-spectra] [--output-base-dir OUTPUT_BASE_DIR]
                   [--use-fisher-covmat] [-i SIM_ID]
 
@@ -55,6 +55,7 @@ or by using the =pslike= executable file. If you do so, you can get option param
       -y YAML_FILE, --yaml-file YAML_FILE
                             Yaml file holding simulation/sampling setup
       --debug               Check chi2 with respect to input parameters
+      --liketest            Check chi2 with respect to expected value
       --fisher              Print parameter standard deviations from Fisher
                             matrix
       --do-mcmc             Use MCMC sampler

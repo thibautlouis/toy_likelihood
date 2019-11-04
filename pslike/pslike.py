@@ -2,7 +2,8 @@
 Inspired from https://github.com/xgarrido/beyondCV/blob/master/beyondCV/beyondCV.py
 """
 import numpy as np
-
+import likelihood_utils
+from colorize import PrintInColor
 try:
     import likelihood_utils
 except:
@@ -172,6 +173,8 @@ def main():
                         default=None, required=True)
     parser.add_argument("--debug", help="Check chi2 with respect to input parameters",
                         default=False, action="store_true")
+    parser.add_argument("--liketest", help="Check chi2 with respect to expected value",
+                        default=False, action="store_true")
     parser.add_argument("--fisher", help="Print parameter standard deviations from Fisher matrix",
                         default=False, action="store_true")
     parser.add_argument("--do-mcmc", help="Use MCMC sampler",
@@ -201,6 +204,10 @@ def main():
         likelihood_utils.debug(setup)
         return
 
+    if args.liketest:
+        likelihood_utils.liketest(setup)
+        return
+
     if args.fisher:
         params = setup.get("cobaya").get("params")
         covmat_params = [k for k, v in params.items() if isinstance(v, dict) and "prior" in v.keys() and "proposal" not in v.keys()]
@@ -208,8 +215,8 @@ def main():
         return
 
     # Store configuration & data
-    import pickle
-    pickle.dump(setup, open(args.output_base_dir + "/setup.pkl", "wb"))
+    #import pickle
+    #pickle.dump(setup, open(args.output_base_dir + "/setup.pkl", "wb"))
 
     # Do the MCMC
     if args.do_mcmc:
