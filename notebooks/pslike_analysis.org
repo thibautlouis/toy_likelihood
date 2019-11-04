@@ -72,8 +72,8 @@ Plot chains for the CMB & nuisance parameters given a simulation id (up to 9 so 
 
 #+RESULTS:
 :results:
-# Out[142]:
-[[file:./obipy-resources/lIHCJO.png]]
+# Out[17]:
+[[file:./obipy-resources/cl1Kst.png]]
 :end:
 
 * MCMC distributions
@@ -87,27 +87,26 @@ Load the different chains into one weighted sample with burnin corresponding to 
 
 Show input values from simulation.
 #+BEGIN_SRC ipython :session :results none
+  inputs = {
+      "cosmomc_theta": 0.0104085,
+      "logA": 3.044,
+      "ombh2": 0.02237,
+      "omch2": 0.1200,
+      "ns": 0.9649,
+      "Alens": 1.0,
+      "tau": 0.0544,
+      "H0": 67.36,
+      "a_tSZ": 3.30,
+      "a_kSZ": 1.60,
+      "a_p": 6.90,
+      "beta_p": 2.08,
+      "a_c": 4.90,
+      "beta_c": 2.20,
+      "n_CIBC": 1.20,
+      "a_s": 3.10,
+      "T_d": 9.60
+  }
   def show_input(g, params):
-      inputs = {
-          "cosmomc_theta": 0.0104085,
-          "logA": 3.044,
-          "ombh2": 0.02237,
-          "omch2": 0.1200,
-          "ns": 0.9649,
-          "Alens": 1.0,
-          "tau": 0.0544,
-          "H0": 67.36,
-          "a_tSZ": 3.30,
-          "a_kSZ": 1.60,
-          "a_p": 6.90,
-          "beta_p": 2.08,
-          "a_c": 4.90,
-          "beta_c": 2.20,
-          "n_CIBC": 1.20,
-          "a_s": 3.10,
-          "T_d": 9.60
-
-      }
       for i, p in enumerate(params):
           x = inputs.get(p, np.nan)
           kwargs = dict(color="gray", ls="--", lw=1)
@@ -140,15 +139,15 @@ Plot posterior distributions of CMB parameters
   xmin, xmax, ymin, ymax = ax.axis()
   x = np.linspace(xmin, xmax, 100)
   from scipy.stats import norm
-  ax.plot(x, 0.018*norm.pdf(x, 0.054, 0.0073), color='gray', ls='--', label=r"$\tau$ prior")
+  ax.plot(x, 0.018*norm.pdf(x, 0.054, 0.0073), color="gray", ls="--", label=r"$\tau$ prior")
   ax.legend(loc="upper left", bbox_to_anchor=(1,1))
 #+END_SRC
 
 #+RESULTS:
 :results:
-# Out[136]:
-: <matplotlib.legend.Legend at 0x7f985a2a49d0>
-[[file:./obipy-resources/37x8C6.png]]
+# Out[18]:
+: <matplotlib.legend.Legend at 0x7fbb5bd41dd0>
+[[file:./obipy-resources/enHOws.png]]
 :end:
 
 Do the same for nuisance parameters
@@ -160,8 +159,8 @@ Do the same for nuisance parameters
 
 #+RESULTS:
 :results:
-# Out[138]:
-[[file:./obipy-resources/J9e4Pc.png]]
+# Out[19]:
+[[file:./obipy-resources/1bOTCC.png]]
 :end:
 
 ** Table
@@ -208,18 +207,84 @@ Show table for mean value and standard deviations
 #+RESULTS:
 | Parameter                    |      mean |        std. |      fisher |
 |------------------------------+-----------+-------------+-------------|
-| $\theta_\mathrm{MC}$         | 0.0104079 | 1.39034e-06 | 1.44861e-06 |
-| $\log(10^{10} A_\mathrm{s})$ |   3.04802 |   0.0156679 |  0.00363176 |
-| $n_\mathrm{s}$               |  0.960039 |  0.00322315 |  0.00327279 |
-| $\Omega_\mathrm{b}h^2$       | 0.0224201 | 6.48072e-05 | 6.53669e-05 |
-| $\Omega_\mathrm{c}h^2$       |  0.120795 |  0.00117659 |  0.00114244 |
-| $A_\mathrm{L}$               |   0.98413 |   0.0269242 |   0.0221857 |
-| $\tau_\mathrm{reio}$         | 0.0546079 |  0.00767169 |             |
-| $a_\mathrm{tSZ}$             |    3.3737 |   0.0466726 |   0.0458633 |
-| $a_\mathrm{kSZ}$             |   1.73203 |    0.106254 |     0.10197 |
-| $a_p$                        |   6.88009 |   0.0757952 |   0.0761274 |
-| $\beta_p$                    |   2.08197 |   0.0141737 |   0.0140995 |
-| $a_c$                        |   4.92254 |    0.119851 |    0.122378 |
-| $\beta_c$                    |   2.19853 |   0.0307534 |   0.0313098 |
-| $a_s$                        |   3.08605 |   0.0111938 |   0.0112543 |
-| $H_0$                        |   67.0801 |    0.449506 |             |
+| $\theta_\mathrm{MC}$         | 0.0104079 | 1.42449e-06 | 1.44861e-06 |
+| $\log(10^{10} A_\mathrm{s})$ |   3.04818 |   0.0149756 |  0.00363176 |
+| $n_\mathrm{s}$               |  0.959824 |  0.00323019 |  0.00327279 |
+| $\Omega_\mathrm{b}h^2$       | 0.0224158 | 6.40752e-05 | 6.53669e-05 |
+| $\Omega_\mathrm{c}h^2$       |  0.120892 |  0.00112531 |  0.00114244 |
+| $A_\mathrm{L}$               |  0.981871 |   0.0258391 |   0.0221857 |
+| $\tau_\mathrm{reio}$         | 0.0545363 |  0.00730931 |             |
+| $a_\mathrm{tSZ}$             |   3.37069 |   0.0461286 |   0.0458633 |
+| $a_\mathrm{kSZ}$             |   1.73616 |    0.100987 |     0.10197 |
+| $a_p$                        |   6.86901 |   0.0769267 |   0.0761274 |
+| $\beta_p$                    |   2.08381 |   0.0142693 |   0.0140995 |
+| $a_c$                        |   4.93582 |     0.12304 |    0.122378 |
+| $\beta_c$                    |   2.19563 |   0.0311278 |   0.0313098 |
+| $a_s$                        |   3.08726 |   0.0112001 |   0.0112543 |
+| $H_0$                        |    67.043 |     0.43428 |             |
+
+** Results from all simulations
+
+Load the different samples
+#+BEGIN_SRC ipython :session :results none
+  samples = [loadMCSamples("./data/tt-te-ee_fg-tt/sim_{}/mcmc".format(sim_id),
+                           settings={"ignore_rows": 0.4}) for sim_id in range(10)]
+#+END_SRC
+
+Function to plot (mean, std) for all the simulations given input value and Fisher variances.
+#+BEGIN_SRC ipython :session :results none
+  def plot_sim_results(params, color="C0"):
+
+      fig, ax = plt.subplots(1, len(params), sharey=True, figsize=(20, 7))
+      plt.subplots_adjust(hspace=0, wspace=0.15)
+      plt.yticks([])
+
+      chi2s = np.empty((len(params), len(samples)))
+      for i, sample in enumerate(samples):
+          marge = sample.getMargeStats()
+          for j, name in enumerate(params):
+              par = marge.parWithName(name)
+              x = par.mean
+              xerr = par.err
+              markers, caps, bars = ax[j].errorbar(x, i, xerr=xerr, fmt="o{}".format(color),
+                                                   ecolor=color, elinewidth=3)
+              [bar.set_alpha(0.5) for bar in bars]
+              chi2s[j, i] = ((x - inputs[name])/xerr)**2
+
+      # Customize axes and labels
+      for j, name in enumerate(params):
+          ax[j].spines["right"].set_color(None)
+          ax[j].spines["top"].set_color(None)
+          ax[j].tick_params(bottom="off")
+          label = samples[0].getLatex(params)[0][j]
+          ax[j].set_xlabel(r"${}$".format(label))
+          x = inputs[name]
+          ax[j].spines["left"].set_position(("data", x))
+          sigma = fisher[name]
+          if sigma:
+              ax[j].axvspan((x - sigma), (x + sigma), color="gray", alpha=0.15)
+          from scipy.stats import chi2
+          ax[j].set_title("$P(\chi^2)$ = {0:.3f}".format(chi2.sf(np.sum(chi2s[j]), len(chi2s[j]))))
+#+END_SRC
+
+CMB parameters
+#+BEGIN_SRC ipython :session :results raw drawer
+  plot_sim_results(["H0", "logA", "ns", "ombh2", "omch2", "Alens"])
+#+END_SRC
+
+#+RESULTS:
+:results:
+# Out[24]:
+[[file:./obipy-resources/PPHnGN.png]]
+:end:
+
+Nuisance parameters
+#+BEGIN_SRC ipython :session :results raw drawer
+  plot_sim_results(nuisance_params, color="C4")
+#+END_SRC
+
+#+RESULTS:
+:results:
+# Out[25]:
+[[file:./obipy-resources/qcFWvd.png]]
+:end:
