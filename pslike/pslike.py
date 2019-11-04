@@ -198,14 +198,16 @@ def main():
         return
 
     # Prepare data
+    
+    if args.liketest:
+        prepare_data(setup, '0')
+        likelihood_utils.debug(setup,test=True)
+        return
+    
     prepare_data(setup, args.sim_id)
 
     if args.debug:
         likelihood_utils.debug(setup)
-        return
-
-    if args.liketest:
-        likelihood_utils.liketest(setup)
         return
 
     if args.fisher:

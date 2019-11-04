@@ -90,7 +90,7 @@ def write_input_cls(setup,lmax,out_dir,plot=False):
                     plt.legend()
                     plt.show()
 
-def debug(setup):
+def debug(setup,test=False):
 
     data = setup["data"]
     lmin, lmax = 2, data["lmax"]
@@ -126,52 +126,21 @@ def debug(setup):
     PrintInColor.red("%s chi2/dof: %.02f/%d "%(select, chi2,len(data_vec)))
 
 
-def liketest(setup):
+    if test==True:
+        if select == "tt-te-ee":
+            chi2e = 1515.03
+        elif select == "tt":
+            chi2e = 437.66
+        elif select == "te":
+            chi2e = 509.46
+        elif select == "ee":
+            chi2e = 548.53
 
-    data = setup["data"]
-    lmin, lmax = 2, data["lmax"]
-    select = data["select"]
-    spec_list = data["spec_list"]
+        liketest = chi2-chi2e
+        PrintInColor.red("%s chi2-chi2expected: %.02f "%(select, liketest))
 
-    data_vec, inv_cov, Bbl = data["data_vec"], data["inv_cov"], data["Bbl"]
 
-    fg_param = setup["simulation"]["fg_parameters"]
-    fg_model = get_fg_ps(setup,lmax)
 
-    Dls_theo = get_cosmo_ps(setup, lmax, ell_factor=True)
-    spectra = ["tt", "te", "ee"]
-    
-    chi2e=[]  
-    if select == "tt-te-ee":
-       chi2e = 1515.03
-    elif select == "tt":
-       chi2e = 437.66
-    elif select == "te":
-       chi2e = 509.46
-    elif select == "ee":
-       chi2e = 548.53
-
-    for s in spectra:
-        Dls_theo[s] = Dls_theo[s][lmin:lmax]
-
-    th_vec=[]
-    if select == "tt-te-ee":
-        for s in spectra:
-            for spec in spec_list:
-                m1,m2=spec.split('x')
-                f1,f2=int(m1.split('_')[1]),int(m2.split('_')[1])
-                th_vec=np.append(th_vec,np.dot(Bbl[s,spec], Dls_theo[s]+fg_model[s,"all",f1,f2]))
-    else:
-        for spec in spec_list:
-            m1,m2=spec.split('x')
-            f1,f2=int(m1.split('_')[1]),int(m2.split('_')[1])
-            th_vec = np.append(th_vec,np.dot(Bbl[select,spec], Dls_theo[select]+fg_model[select,"all",f1,f2]))
-            
-
-    delta = data_vec-th_vec
-    chi2 = np.dot(delta, inv_cov.dot(delta))
-    liketest = chi2-chi2e
-    PrintInColor.red("%s chi2-chi2expected: %.04f "%(select, liketest))
 
 
 def fisher(setup, covmat_params):
