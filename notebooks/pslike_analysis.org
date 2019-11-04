@@ -1,12 +1,27 @@
 #+TITLE: SO Likelihood Implementation
 
 * Preamble
+This notebook make use of [[https://getdist.readthedocs.io/en/latest/][GetDist]] python package to plot and to analyse MCMC samples.
 #+BEGIN_SRC ipython :session :results none
   %matplotlib inline
   import matplotlib.pyplot as plt
   import numpy as np
   from getdist import plots, loadMCSamples
 #+END_SRC
+
+Print version used
+#+BEGIN_SRC ipython :session :results output
+  import matplotlib as mpl
+  import getdist
+  print("     Numpy :", np.__version__)
+  print("Matplotlib :", mpl.__version__)
+  print("   GetDist :", getdist.__version__)
+#+END_SRC
+
+#+RESULTS:
+:      Numpy : 1.16.3
+: Matplotlib : 3.1.0
+:    GetDist : 1.0.0
 
 * Definitions
 Define CMB & nuisance parameter names.
