@@ -72,8 +72,8 @@ Plot chains for the CMB & nuisance parameters given a simulation id (up to 9 so 
 
 #+RESULTS:
 :results:
-# Out[228]:
-[[file:./obipy-resources/dBMDue.png]]
+# Out[17]:
+[[file:./obipy-resources/cl1Kst.png]]
 :end:
 
 * MCMC distributions
@@ -139,15 +139,15 @@ Plot posterior distributions of CMB parameters
   xmin, xmax, ymin, ymax = ax.axis()
   x = np.linspace(xmin, xmax, 100)
   from scipy.stats import norm
-  ax.plot(x, 0.018*norm.pdf(x, 0.054, 0.0073), color='gray', ls='--', label=r"$\tau$ prior")
+  ax.plot(x, 0.018*norm.pdf(x, 0.054, 0.0073), color="gray", ls="--", label=r"$\tau$ prior")
   ax.legend(loc="upper left", bbox_to_anchor=(1,1))
 #+END_SRC
 
 #+RESULTS:
 :results:
-# Out[231]:
-: <matplotlib.legend.Legend at 0x7f9858c98990>
-[[file:./obipy-resources/IcVPXJ.png]]
+# Out[18]:
+: <matplotlib.legend.Legend at 0x7fbb5bd41dd0>
+[[file:./obipy-resources/enHOws.png]]
 :end:
 
 Do the same for nuisance parameters
@@ -159,8 +159,8 @@ Do the same for nuisance parameters
 
 #+RESULTS:
 :results:
-# Out[232]:
-[[file:./obipy-resources/v28Eh9.png]]
+# Out[19]:
+[[file:./obipy-resources/1bOTCC.png]]
 :end:
 
 ** Table
@@ -207,21 +207,21 @@ Show table for mean value and standard deviations
 #+RESULTS:
 | Parameter                    |      mean |        std. |      fisher |
 |------------------------------+-----------+-------------+-------------|
-| $\theta_\mathrm{MC}$         | 0.0104079 | 1.39836e-06 | 1.44861e-06 |
-| $\log(10^{10} A_\mathrm{s})$ |   3.04846 |   0.0150635 |  0.00363176 |
-| $n_\mathrm{s}$               |  0.959974 |  0.00329312 |  0.00327279 |
-| $\Omega_\mathrm{b}h^2$       | 0.0224177 | 6.49812e-05 | 6.53669e-05 |
-| $\Omega_\mathrm{c}h^2$       |  0.120808 |  0.00115414 |  0.00114244 |
-| $A_\mathrm{L}$               |  0.982483 |   0.0253405 |   0.0221857 |
-| $\tau_\mathrm{reio}$         | 0.0547738 |  0.00741189 |             |
-| $a_\mathrm{tSZ}$             |   3.37415 |   0.0457641 |   0.0458633 |
-| $a_\mathrm{kSZ}$             |   1.73372 |    0.101343 |     0.10197 |
-| $a_p$                        |   6.87035 |   0.0753603 |   0.0761274 |
-| $\beta_p$                    |   2.08381 |   0.0141943 |   0.0140995 |
-| $a_c$                        |   4.93639 |    0.120184 |    0.122378 |
-| $\beta_c$                    |   2.19509 |    0.030709 |   0.0313098 |
-| $a_s$                        |   3.08636 |   0.0114876 |   0.0112543 |
-| $H_0$                        |   67.0731 |    0.441332 |             |
+| $\theta_\mathrm{MC}$         | 0.0104079 | 1.42449e-06 | 1.44861e-06 |
+| $\log(10^{10} A_\mathrm{s})$ |   3.04818 |   0.0149756 |  0.00363176 |
+| $n_\mathrm{s}$               |  0.959824 |  0.00323019 |  0.00327279 |
+| $\Omega_\mathrm{b}h^2$       | 0.0224158 | 6.40752e-05 | 6.53669e-05 |
+| $\Omega_\mathrm{c}h^2$       |  0.120892 |  0.00112531 |  0.00114244 |
+| $A_\mathrm{L}$               |  0.981871 |   0.0258391 |   0.0221857 |
+| $\tau_\mathrm{reio}$         | 0.0545363 |  0.00730931 |             |
+| $a_\mathrm{tSZ}$             |   3.37069 |   0.0461286 |   0.0458633 |
+| $a_\mathrm{kSZ}$             |   1.73616 |    0.100987 |     0.10197 |
+| $a_p$                        |   6.86901 |   0.0769267 |   0.0761274 |
+| $\beta_p$                    |   2.08381 |   0.0142693 |   0.0140995 |
+| $a_c$                        |   4.93582 |     0.12304 |    0.122378 |
+| $\beta_c$                    |   2.19563 |   0.0311278 |   0.0313098 |
+| $a_s$                        |   3.08726 |   0.0112001 |   0.0112543 |
+| $H_0$                        |    67.043 |     0.43428 |             |
 
 ** Results from all simulations
 
@@ -274,8 +274,8 @@ CMB parameters
 
 #+RESULTS:
 :results:
-# Out[236]:
-[[file:./obipy-resources/nQ7FYr.png]]
+# Out[24]:
+[[file:./obipy-resources/PPHnGN.png]]
 :end:
 
 Nuisance parameters
@@ -285,6 +285,6 @@ Nuisance parameters
 
 #+RESULTS:
 :results:
-# Out[237]:
-[[file:./obipy-resources/toSV4h.png]]
+# Out[25]:
+[[file:./obipy-resources/qcFWvd.png]]
 :end:

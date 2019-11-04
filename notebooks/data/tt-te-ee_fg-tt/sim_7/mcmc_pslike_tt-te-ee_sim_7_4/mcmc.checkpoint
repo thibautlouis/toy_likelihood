@@ -1,7 +1,7 @@
 sampler:
   mcmc:
     converged: false
-    Rminus1_last: 0.2100359427925892
+    Rminus1_last: 0.030491191433814426
     proposal_scale: 2.4
     blocks:
     - - 0
