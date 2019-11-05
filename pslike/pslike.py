@@ -191,7 +191,7 @@ def main():
         setup = yaml.load(stream, Loader=yaml.FullLoader)
 
     if args.get_input_spectra:
-        likelihood_utils.write_input_cls(setup, lmax=9000, out_dir='/input_spectra')
+        likelihood_utils.write_input_cls(setup, lmax=9000, out_dir='input_spectra')
         return
 
     # Prepare data
