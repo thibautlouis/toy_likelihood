@@ -45,8 +45,7 @@ or by using the =pslike= executable file. If you do so, you can get option param
 #+BEGIN_SRC shell
   $ pslike --help
     usage: pslike [-h] -y YAML_FILE [--debug] [--liketest] [--fisher] [--do-mcmc]
-                  [--get-input-spectra] [--output-base-dir OUTPUT_BASE_DIR]
-                  [--use-fisher-covmat] [-i SIM_ID]
+                  [--get-input-spectra] [--use-fisher-covmat] [-i SIM_ID]
 
     SO python likelihood
 
@@ -61,8 +60,6 @@ or by using the =pslike= executable file. If you do so, you can get option param
       --do-mcmc             Use MCMC sampler
       --get-input-spectra   Return input spectra corresponding to the sim
                             parameters
-      --output-base-dir OUTPUT_BASE_DIR
-                            Set the output base dir where to store results
       --use-fisher-covmat   Use covariance matrix from Fisher calculation as
                             proposal
       -i SIM_ID, --sim-id SIM_ID

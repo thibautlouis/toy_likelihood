@@ -180,8 +180,6 @@ def main():
                         default=False, action="store_true")
     parser.add_argument("--get-input-spectra", help="return input spectra corresponding to the sim parameters",
                         default=False, action="store_true")
-    parser.add_argument("--output-base-dir", help="Set the output base dir where to store results",
-                        default=".")
     parser.add_argument("--use-fisher-covmat", help="Use covariance matrix from Fisher calculation as proposal",
                         default=False, action="store_true")
     parser.add_argument("-i","--sim-id", help="Simulation number",
