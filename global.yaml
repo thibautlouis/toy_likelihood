@@ -35,7 +35,7 @@ data:
     - 145 # GHz
     - 225 # GHz
   data_folder: like_products
-  select: tt-te-ee
+  select: tt-te-ee #could be tt or te or ee
   # Bbl range
   lmax: 6002
 
@@ -56,6 +56,7 @@ foregrounds:
       - radio
       - tSZ
       - cibc
+        # need to include tSZxCIB
     te: []
     ee: []
 
@@ -66,6 +67,8 @@ foregrounds:
 cobaya:
   debug: False
   force: True
+
+  output: chains/test_2
 
   params:
     # Sampled
@@ -113,6 +116,8 @@ cobaya:
     # Derived
     H0:
       latex: H_0
+    sigma8:
+      latex: \sigma_8
     # Foregrounds
     a_tSZ:
       prior:

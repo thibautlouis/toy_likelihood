@@ -237,7 +237,7 @@ def main():
         mcmc_dict = {"mcmc": None}
 
         setup["cobaya"]["sampler"] = mcmc_dict
-        setup["cobaya"]["output"] = args.output_base_dir + "/mcmc"
+        output = setup["cobaya"]["output"] 
         updated_info, results = sampling(setup)
 
 # script:
