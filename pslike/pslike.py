@@ -2,7 +2,6 @@
 Inspired from https://github.com/xgarrido/beyondCV/blob/master/beyondCV/beyondCV.py
 """
 import numpy as np
-import likelihood_utils
 from colorize import PrintInColor
 try:
     import likelihood_utils
@@ -198,7 +197,6 @@ def main():
         return
 
     # Prepare data
-    
     if args.liketest:
         prepare_data(setup, '0')
         likelihood_utils.debug(setup,test=True)
