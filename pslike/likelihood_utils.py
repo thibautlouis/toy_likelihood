@@ -220,7 +220,7 @@ def fisher(setup, covmat_params):
             value = cosmo[p]
         elif p in foreground:
             value=foreground[p]
-            print("param:",p,", sigma:",np.sqrt(cov[count,count]),", Fisher S/N", value/np.sqrt(cov[count,count]) )
+        print("param:",p,", sigma:",np.sqrt(cov[count,count]),", Fisher S/N", value/np.sqrt(cov[count,count]) )
 
     return cov
 
