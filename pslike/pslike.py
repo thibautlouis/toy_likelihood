@@ -2,62 +2,71 @@
 Inspired from https://github.com/xgarrido/beyondCV/blob/master/beyondCV/beyondCV.py
 """
 import numpy as np
+import sacc
 from colorize import PrintInColor
 try:
     import likelihood_utils
 except:
     from pslike import likelihood_utils
 
-def prepare_data(setup, sim_id=None):
-
+def prepare_data(setup, verbose=False):
     data = setup["data"]
-    loc = data["data_folder"]
-    experiments = data["experiments"]
+    s = sacc.Sacc.load_fits(data['input_spectra'])
+    experiments = sorted(data['experiments'])
 
-    Bbl = {}
-    spectra = ["tt","te","ee"]
-    data_vec = {s:[] for s in spectra}
+    try:
+        default_cuts = data['defaults']
+    except:
+        raise KeyError('You must provide a list of default cuts')
 
-    spec_list = []
-    for id_exp1, exp1 in enumerate(experiments):
-        freqs1 = data["freq_%s" % exp1]
-        for id_f1, f1 in enumerate(freqs1):
-            for id_exp2, exp2 in enumerate(experiments):
-                freqs2 = data["freq_%s" % exp2]
-                for id_f2, f2 in enumerate(freqs2):
-                    if id_exp1 == id_exp2 and id_f1 > id_f2: continue
-                    if id_exp1 > id_exp2: continue
+    # Translation betwen TEB and sacc C_ell types
+    pol_dict = {'T': '0',
+                'E': 'e',
+                'B': 'b'}
 
-                    spec_name = "%s_%sx%s_%s" % (exp1, f1, exp2, f2)
-                    file_name = "%s/Dl_%s" % (loc, spec_name)
-                    file_name += ".dat" if not sim_id else "_%05d.dat" % int(sim_id)
+    indices = []
+    lens = 0
+    for spectrum in data['spectra']:
+        exp_1, exp_2 = spectrum['experiments']
+        freq_1, freq_2 = spectrum['frequencies']
+        # Read off polarization channel combinations
+        pols = spectrum.get('polarizations',
+                            default_cuts['polarizations']).copy()
+        # Read off scale cuts
+        scls = spectrum.get('scales',
+                            default_cuts['scales']).copy()
+        # For the same two channels, do not include ET and TE, only TE
+        if (exp_1 == exp_2) and (freq_1 == freq_2):
+            if ('ET' in pols):
+                pols.remove('ET')
+                if ('TE' not in pols):
+                    pols.append('TE')
+                    scls['TE'] = scls['ET']
+        for pol in pols:
+            p1, p2 = pol
+            tname_1 = exp_1 + '_' + str(freq_1)
+            tname_2 = exp_2 + '_' + str(freq_2)
+            lmin, lmax = scls[p1 + p2]
+            if p1 in ['E', 'B']:
+                tname_1 += '_s2'
+            else:
+                tname_1 += '_s0'
+            if p2 in ['E', 'B']:
+                tname_2 += '_s2'
+            else:
+                tname_2 += '_s0'
+            dtype = 'cl_' + pol_dict[p1] + pol_dict[p2]
+            ind = s.indices(dtype,  # Select power spectrum type
+                            (tname_1, tname_2),  # Select channel combinations
+                            ell__gt=lmin, ell__lt=lmax)  # Scale cuts
+            lens += len(ind)
+            indices += list(ind)
+            print(tname_1, tname_2, dtype, ind.shape, lmin, lmax)
 
-                    l, ps = likelihood_utils.read_spectra(file_name)
-
-                    for s in spectra:
-                        Bbl[s,spec_name] = np.loadtxt("%s/Bbl_%s_%s.dat" % (loc, spec_name, s.upper()))
-                        if s == "te":
-                            data_vec[s] = np.append(data_vec[s], (ps["te"]+ps["et"])/2)
-                        else:
-                            data_vec[s] = np.append(data_vec[s], ps[s])
-
-                    spec_list += [spec_name]
-
-    cov_mat = np.loadtxt("%s/covariance.dat" % loc)
-
-    select = data["select"]
-    if select == "tt-te-ee":
-        vec = np.concatenate([data_vec[spec] for spec in spectra])
-        data.update({"l": l, "data_vec": vec, "inv_cov": np.linalg.inv(cov_mat),
-                     "Bbl": Bbl, "spec_list": spec_list})
-    else:
-        for count, spec in enumerate(spectra):
-            if select == spec:
-                n_bins = int(cov_mat.shape[0])
-                cov_mat = cov_mat[count*n_bins//3:(count+1)*n_bins//3,
-                                  count*n_bins//3:(count+1)*n_bins//3]
-                data.update({"l": l, "data_vec": data_vec[spec], "inv_cov": np.linalg.inv(cov_mat),
-                             "Bbl": Bbl,  "spec_list": spec_list})
+    # Get rid of all the unselected power spectra
+    s.keep_indices(np.array(indices))
+    # Pass all of the data downstream
+    data.update({'inputs': s})
 
 
 def get_fg_model(setup, fg_param):

@@ -28,16 +28,43 @@ simulation:
 ##############################
 
 data:
+  input_spectra: like_products/data_sacc_00000.fits
   experiments:
-    - LAT
-  freq_LAT:
-    - 93  # GHz
-    - 145 # GHz
-    - 225 # GHz
-  data_folder: like_products
-  select: tt-te-ee #could be tt or te or ee
-  # Bbl range
-  lmax: 6002
+    LAT:
+      frequencies: [93, 145, 225]
+    PlanckHFI:
+      frequencies: [545]
+  defaults:
+    polarizations: ['TT', 'TE', 'ET', 'EE']
+    scales:
+      TT: [200, 6002]
+      TE: [200, 6002]
+      ET: [200, 6002]
+      EE: [200, 6002]
+    
+  spectra:
+    - experiments: ['LAT', 'LAT']
+      frequencies: [93, 93]
+      polarizations: ['TT','TE','EE']
+      scales:
+        TT: [200, 3001]
+        TE: [200, 3001]
+        EE: [200, 6001]
+    - experiments: ['LAT', 'LAT']
+      frequencies: [93, 145]
+      polarizations: ['TT','TE','ET','EE']
+    - experiments: ['LAT', 'LAT']
+      frequencies: [93, 225]
+      polarizations: ['TT','TE','ET','EE']
+    - experiments: ['LAT', 'LAT']
+      frequencies: [145, 145]
+      polarizations: ['TT','TE','EE']
+    - experiments: ['LAT', 'LAT']
+      frequencies: [145, 225]
+      polarizations: ['TT','TE','ET','EE']
+    - experiments: ['LAT', 'LAT']
+      frequencies: [225, 225]
+      polarizations: ['TT','TE','EE']
 
 
 ##############################
